@@ -34,26 +34,38 @@ public:
 
     void init_sudoku()
     {
-        const std::vector<std::string> rows =
-        {
-            "---613---",
-            "----5----",
-            "1---2---8",
-            "-85---24-",
-            "--7---1--",
-            "-21---87-",
-            "2---7---9",
-            "----8----",
-            "---965---"
-        };
+        sudoku[0][3] = '6';
+        sudoku[0][4] = '1';
+        sudoku[0][5] = '3';
 
-        for (int i = 0; i < 9; ++i)
-        {
-            for (int j = 0; j < 9; ++j)
-            {
-                sudoku[i][j] = rows[i][j];
-            }
-        }
+        sudoku[1][4] = '5';
+
+        sudoku[2][0] = '1';
+        sudoku[2][4] = '2';
+        sudoku[2][8] = '8';
+
+        sudoku[3][1] = '8';
+        sudoku[3][2] = '5';
+        sudoku[3][6] = '2';
+        sudoku[3][7] = '4';
+
+        sudoku[4][2] = '7';
+        sudoku[4][6] = '1';
+
+        sudoku[5][1] = '2';
+        sudoku[5][2] = '1';
+        sudoku[5][6] = '8';
+        sudoku[5][7] = '7';
+
+        sudoku[6][0] = '2';
+        sudoku[6][4] = '7';
+        sudoku[6][8] = '9';
+
+        sudoku[7][4] = '8';
+
+        sudoku[8][3] = '9';
+        sudoku[8][4] = '6';
+        sudoku[8][5] = '5';
     }
 
     bool check_if_correct() const
@@ -151,11 +163,9 @@ public:
         }
 
         int iterations = 0;
-        bool changed = true;
-        while (changed)
-        {
-            changed = false;
 
+        while (!check_if_correct())
+        {
             for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
@@ -176,7 +186,29 @@ public:
                         if (vec.size() == 1 && sudoku[i][jj] == '-')
                         {
                             sudoku[i][jj] = vec.front() + '0';
-                            changed = true;
+                        }
+                    }
+
+                    // Крутая проверка
+                    for (int num = 1; num <= 9; num++)
+                    {
+                        int count = 0;
+                        int last_pos = -1;
+
+                        for (int jj = 0; jj < 9; jj++)
+                        {
+                            auto& vec = what_can_stand[i][jj];
+
+                            if (std::find(vec.begin(), vec.end(), num) != vec.end())
+                            {
+                                count++;
+                                last_pos = jj;
+                            }
+                        }
+
+                        if (count == 1 && sudoku[i][last_pos] == '-')
+                        {
+                            sudoku[i][last_pos] = num + '0';
                         }
                     }
 
@@ -189,7 +221,29 @@ public:
                         if (vec.size() == 1 && sudoku[ii][j] == '-')
                         {
                             sudoku[ii][j] = vec.front() + '0';
-                            changed = true;
+                        }
+                    }
+
+                    // Крутая проверка
+                    for (int num = 1; num <= 9; num++)
+                    {
+                        int count = 0;
+                        int last_pos = -1;
+
+                        for (int ii = 0; ii < 9; ii++)
+                        {
+                            auto & vec = what_can_stand[ii][j];
+
+                            if (std::find(vec.begin(), vec.end(), num) != vec.end())
+                            {
+                                count++;
+                                last_pos = ii;
+                            }
+                        }
+
+                        if (count == 1 && sudoku[last_pos][j] == '-')
+                        {
+                            sudoku[last_pos][j] = num + '0';
                         }
                     }
 
@@ -207,8 +261,32 @@ public:
                             if (vec.size() == 1 && sudoku[ii][jj] == '-')
                             {
                                 sudoku[ii][jj] = vec.front() + '0';
-                                changed = true;
                             }
+                        }
+                    }
+
+                    for (int num = 1; num <= 9; num++)
+                    {
+                        int count = 0;
+                        int last_i = -1, last_j = -1;
+
+                        for (int ii = square_i; ii < square_i + 3; ii++)
+                        {
+                            for (int jj = square_j; jj < square_j + 3; jj++)
+                            {
+                                auto& vec = what_can_stand[ii][jj];
+                                if (std::find(vec.begin(), vec.end(), num) != vec.end())
+                                {
+                                    count++;
+                                    last_i = ii;
+                                    last_j = jj;
+                                }
+                            }
+                        }
+
+                        if (count == 1 && sudoku[last_i][last_j] == '-')
+                        {
+                            sudoku[last_i][last_j] = num + '0';
                         }
                     }
 
@@ -223,8 +301,28 @@ public:
                             if (vec.size() == 1 && sudoku[ii][ii] == '-')
                             {
                                 sudoku[ii][ii] = vec.front() + '0';
-                                changed = true;
                             }
+                        }
+                    }
+
+                    for (int num = 1; num <= 9; num++)
+                    {
+                        int count = 0;
+                        int last_i = -1;
+
+                        for (int ii = 0; ii < 9; ii++)
+                        {
+                            auto& vec = what_can_stand[ii][ii];
+                            if (std::find(vec.begin(), vec.end(), num) != vec.end())
+                            {
+                                count++;
+                                last_i = ii;
+                            }
+                        }
+
+                        if (count == 1 && sudoku[last_i][last_i] == '-')
+                        {
+                            sudoku[last_i][last_i] = num + '0';
                         }
                     }
 
@@ -239,8 +337,29 @@ public:
                             if (vec.size() == 1 && sudoku[ii][8 - ii] == '-')
                             {
                                 sudoku[ii][8 - ii] = vec.front() + '0';
-                                changed = true;
                             }
+                        }
+                    }
+
+                    for (int num = 1; num <= 9; num++)
+                    {
+                        int count = 0;
+                        int last_i = -1;
+
+                        for (int ii = 0; ii < 9; ii++)
+                        {
+                            int jj = 8 - ii;
+                            auto& vec = what_can_stand[ii][jj];
+                            if (std::find(vec.begin(), vec.end(), num) != vec.end())
+                            {
+                                count++;
+                                last_i = ii;
+                            }
+                        }
+
+                        if (count == 1 && sudoku[last_i][8 - last_i] == '-')
+                        {
+                            sudoku[last_i][8 - last_i] = num + '0';
                         }
                     }
                 }
