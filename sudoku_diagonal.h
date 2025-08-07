@@ -151,143 +151,6 @@ public:
         }
     }
 
-    static void apply_naked_pairs_in_blocks(std::vector<int> what_can_stand[9][9])
-    {
-        for (int block_i = 0; block_i < 3; block_i++)
-        {
-            for (int block_j = 0; block_j < 3; block_j++)
-            {
-                std::vector<std::pair<int, int>> cells_with_two;
-                for (int i = 0; i < 3; i++)
-                {
-                    for (int j = 0; j < 3; j++)
-                    {
-                        int row = block_i * 3 + i;
-                        int col = block_j * 3 + j;
-
-                        if (what_can_stand[row][col].size() == 2)
-                        {
-                            cells_with_two.emplace_back(row, col);
-                        }
-                    }
-                }
-
-                for (size_t a = 0; a < cells_with_two.size(); a++)
-                {
-                    for (size_t b = a + 1; b < cells_with_two.size(); b++)
-                    {
-                        auto [r1, c1] = cells_with_two[a];
-                        auto [r2, c2] = cells_with_two[b];
-
-                        if (what_can_stand[r1][c1] == what_can_stand[r2][c2])
-                        {
-                            const auto& pair = what_can_stand[r1][c1];
-                            for (int i = 0; i < 3; i++)
-                            {
-                                for (int j = 0; j < 3; j++)
-                                {
-                                    const int row = block_i * 3 + i;
-                                    const int col = block_j * 3 + j;
-
-                                    if ((row == r1 && col == c1) || (row == r2 && col == c2))
-                                    {
-                                        continue;
-                                    }
-
-                                    for (int val : pair)
-                                    {
-                                        auto& cell = what_can_stand[row][col];
-                                        cell.erase(std::remove(cell.begin(), cell.end(), val), cell.end());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    static void apply_naked_pairs_in_diagonals(std::vector<int> what_can_stand[9][9])
-    {
-        // Левая диагональ
-        std::vector<std::pair<int, int>> main_diag;
-        for (int i = 0; i < 9; i++)
-        {
-            if (what_can_stand[i][i].size() == 2)
-            {
-                main_diag.emplace_back(i, i);
-            }
-        }
-
-        for (size_t a = 0; a < main_diag.size(); a++)
-        {
-            for (size_t b = a + 1; b < main_diag.size(); b++)
-            {
-                auto [r1, c1] = main_diag[a];
-                auto [r2, c2] = main_diag[b];
-
-                if (what_can_stand[r1][c1] == what_can_stand[r2][c2])
-                {
-                    const auto& pair = what_can_stand[r1][c1];
-                    for (int i = 0; i < 9; i++)
-                    {
-                        if ((i == r1 && i == c1) || (i == r2 && i == c2))
-                        {
-                            continue;
-                        }
-
-                        for (int val : pair)
-                        {
-                            auto& cell = what_can_stand[i][i];
-                            cell.erase(std::remove(cell.begin(), cell.end(), val), cell.end());
-                        }
-                    }
-                }
-            }
-        }
-
-        // Правая диагональ
-        std::vector<std::pair<int, int>> anti_diag;
-        for (int i = 0; i < 9; i++)
-        {
-            int j = 8 - i;
-            if (what_can_stand[i][j].size() == 2)
-            {
-                anti_diag.emplace_back(i, j);
-            }
-        }
-
-        for (size_t a = 0; a < anti_diag.size(); a++)
-        {
-            for (size_t b = a + 1; b < anti_diag.size(); b++)
-            {
-                auto [r1, c1] = anti_diag[a];
-                auto [r2, c2] = anti_diag[b];
-
-                if (what_can_stand[r1][c1] == what_can_stand[r2][c2])
-                {
-                    const auto& pair = what_can_stand[r1][c1];
-                    for (int i = 0; i < 9; i++)
-                    {
-                        const int j = 8 - i;
-                        if ((i == r1 && j == c1) || (i == r2 && j == c2))
-                        {
-                            continue;
-                        }
-
-                        for (int val : pair)
-                        {
-                            auto& cell = what_can_stand[i][j];
-                            cell.erase(std::remove(cell.begin(), cell.end(), val), cell.end());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
     void sudoku_solver()
     {
         std::vector<int> what_can_stand[9][9];
@@ -486,8 +349,6 @@ public:
                         }
                     }
 
-                    // apply_naked_pairs_in_blocks(what_can_stand);
-
                     // Удалить из левой диагонали
                     if (i == j)
                     {
@@ -562,14 +423,18 @@ public:
                             sudoku[last_i][8 - last_i] = num + '0';
                         }
                     }
-
-                    // apply_naked_pairs_in_diagonals(what_can_stand);
                 }
             }
 
             iterations++;
             std::cout << "This is " + std::to_string(iterations) + " cycle\n";
             print_sudoku();
+
+            if (iterations == 20)
+            {
+                std::cout << "I can't solve this :(\n";
+                break;
+            }
 
             if (check_if_correct())
             {
