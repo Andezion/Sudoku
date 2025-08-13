@@ -230,7 +230,8 @@ int main()
     }
     else
     {
-        std::__throw_logic_error("Wrong input");
+        delete sudoku;
+        return 0;
     }
 
     sudoku->generate(2);
