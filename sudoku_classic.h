@@ -484,8 +484,8 @@ public:
                     }
 
                     // Удалить из квадрата 3x3
-                    const int square_i = (i / 3) * 3;
-                    const int square_j = (j / 3) * 3;
+                    const int square_i = i / 3 * 3;
+                    const int square_j = j / 3 * 3;
 
                     for (int ii = square_i; ii < square_i + 3; ii++)
                     {
