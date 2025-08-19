@@ -234,7 +234,7 @@ int main()
         return 0;
     }
 
-    sudoku->generate(2);
+    sudoku->generate(8);
     sudoku->show();
 
     delete sudoku;

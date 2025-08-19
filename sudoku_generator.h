@@ -4,10 +4,12 @@
 #include <vector>
 #include <algorithm>
 #include <random>
+#include <random>
 
 class sudoku_generator
 {
 public:
+    virtual void deleter(uint8_t level) {}
     virtual void generate(const uint8_t level) {}
     virtual void show() {}
 
@@ -72,6 +74,25 @@ public:
         return false;
     }
 
+    void deleter(uint8_t level) override
+    {
+        std::random_device dev;
+        std::mt19937 rng(dev());
+
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                std::uniform_int_distribution<std::mt19937::result_type> dist6(1, 10 - level);
+                if (dist6(rng) == 1)
+                {
+                    sudoku[i][j] = 0;
+                }
+            }
+        }
+
+    }
+
     void generate(const uint8_t level) override
     {
         std::vector<int> probability[9][9]{};
@@ -85,6 +106,7 @@ public:
         }
 
         fillCell(0, 0, probability, sudoku);
+        deleter(level);
     }
     void show() override
     {
@@ -93,7 +115,14 @@ public:
         {
             for (int j = 0; j < 9; j++)
             {
-                std::cout << sudoku[i][j] << "  ";
+                if (sudoku[i][j] != 0)
+                {
+                    std::cout << sudoku[i][j] << "  ";
+                }
+                else
+                {
+                    std::cout << " " << "  ";
+                }
             }
             std::cout << std::endl;
         }
