@@ -217,8 +217,14 @@ int main()
     // test_classic_sudoku_8();
 
     sudoku_generator *sudoku = nullptr;
+
+    std::cout << "Enter type: ";
     int type;
     std::cin >> type;
+
+    std::cout << "Enter level: ";
+    int level;
+    std::cin >> level;
 
     if (type == 1)
     {
@@ -234,7 +240,7 @@ int main()
         return 0;
     }
 
-    sudoku->generate(8);
+    sudoku->generate(level);
     sudoku->show();
 
     delete sudoku;
