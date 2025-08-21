@@ -11,14 +11,13 @@ class sudoku_generator
 public:
     virtual void deleter(uint8_t level) {}
     virtual void generate(const uint8_t level) {}
-    virtual void show() {}
     virtual bool is_valid_sudoku(const int row, const int col, const int num) const { return false; }
     virtual bool solve_sudoku(int &solutions, const int limit = 2) { return false; }
 
     virtual ~sudoku_generator() {}
 };
 
-class sudoku_classic final : public sudoku_generator
+class sudoku_generator_classic final : public sudoku_generator
 {
     int sudoku[9][9]{};
 public:
@@ -137,7 +136,7 @@ public:
         return true;
     }
 
-    bool has_unique_solution(int grid[9][9])
+    bool has_unique_solution()
     {
         int solutions = 0;
         solve_sudoku(solutions, 2);
@@ -170,7 +169,7 @@ public:
             const int backup = sudoku[i][j];
             sudoku[i][j] = 0;
 
-            if (!has_unique_solution(sudoku))
+            if (!has_unique_solution())
             {
                 sudoku[i][j] = backup;
             }
@@ -196,30 +195,9 @@ public:
         create_sudoku(0, 0, probability, sudoku);
         deleter(level);
     }
-
-    void show() override
-    {
-        std::cout << "==== SUDOKU  CLASSIC ====" << std::endl;
-        for (int i = 0; i < 9; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                if (sudoku[i][j] != 0)
-                {
-                    std::cout << sudoku[i][j] << "  ";
-                }
-                else
-                {
-                    std::cout << "_" << "  ";
-                }
-            }
-            std::cout << std::endl;
-        }
-        std::cout << "=========================" << std::endl;
-    }
 };
 
-class sudoku_diagonal final : public sudoku_generator
+class sudoku_generator_diagonal final : public sudoku_generator
 {
     int sudoku[9][9]{};
 public:
@@ -231,17 +209,6 @@ public:
             {
                 sudoku[i][j] = i + j;
             }
-        }
-    }
-    void show() override
-    {
-        for (int i = 0; i < 9; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                std::cout << sudoku[i][j] % 9 << "  ";
-            }
-            std::cout << std::endl;
         }
     }
 };

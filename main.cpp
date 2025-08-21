@@ -4,6 +4,7 @@
 // #include "sudoku_diagonal.h"
 
 #include "sudoku_generator.h"
+#include "sudoku_show.h"
 
 // void test_classic_sudoku_1()
 // {
@@ -216,33 +217,6 @@ int main()
     // test_classic_sudoku_7();
     // test_classic_sudoku_8();
 
-    sudoku_generator *sudoku = nullptr;
 
-    std::cout << "Enter type: ";
-    int type;
-    std::cin >> type;
-
-    std::cout << "Enter level: ";
-    int level;
-    std::cin >> level;
-
-    if (type == 1)
-    {
-        sudoku = new sudoku_classic();
-    }
-    else if (type == 2)
-    {
-        sudoku = new sudoku_diagonal();
-    }
-    else
-    {
-        delete sudoku;
-        return 0;
-    }
-
-    sudoku->generate(level);
-    sudoku->show();
-
-    delete sudoku;
     return 0;
 }
