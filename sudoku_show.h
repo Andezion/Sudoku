@@ -3,18 +3,18 @@
 
 class sudoku_show
 {
-    int sudoku[9][9]{};
+    std::array<std::array<int, 9>, 9> sudoku{};
 public:
-    virtual void show(int sudoku[9][9]) { this.sudoku = sudoku;}
+    virtual void show(std::array<std::array<int, 9>, 9> sudoku) {}
 
     virtual ~sudoku_show() = default;
 };
 
 class sudoku_show_classic final : public sudoku_show
 {
-    int sudoku[9][9]{};
+    std::array<std::array<int, 9>, 9> sudoku{};
 public:
-    void show() override
+    void show(const std::array<std::array<int, 9>, 9> sudoku) override
     {
         std::cout << "==== SUDOKU  CLASSIC ====" << std::endl;
         for (int i = 0; i < 9; i++)
@@ -38,9 +38,9 @@ public:
 
 class sudoku_show_diagonal final : public sudoku_show
 {
-    int sudoku[9][9]{};
+    std::array<std::array<int, 9>, 9> sudoku{};
 public:
-    void show() override
+    void show(const std::array<std::array<int, 9>, 9> sudoku) override
     {
         std::cout << "==== SUDOKU DIAGONAL ====" << std::endl;
         for (int i = 0; i < 9; i++)

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <array>
 #include <random>
 #include <cstring>
 
@@ -10,7 +11,12 @@ class sudoku_generator
 {
 public:
     virtual void deleter(uint8_t level) {}
-    virtual void generate(const uint8_t level) {}
+
+    virtual std::array<std::array<int, 9>, 9> generate(const uint8_t level)
+    {
+        return {};
+    }
+
     virtual bool is_valid_sudoku(const int row, const int col, const int num) const { return false; }
     virtual bool solve_sudoku(int &solutions, const int limit = 2) { return false; }
 
@@ -19,9 +25,9 @@ public:
 
 class sudoku_generator_classic final : public sudoku_generator
 {
-    int sudoku[9][9]{};
+    std::array<std::array<int, 9>, 9> sudoku{};
 public:
-    static bool create_sudoku(int i, int j, std::vector<int> probability[9][9], int sudoku[9][9])
+    static bool create_sudoku(int i, int j, std::vector<int> probability[9][9], std::array<std::array<int, 9>, 9> sudoku)
     {
         if (j == 9)
         {
@@ -180,7 +186,7 @@ public:
         }
     }
 
-    void generate(const uint8_t level) override
+    std::array<std::array<int, 9>, 9> generate(const uint8_t level) override
     {
         std::vector<int> probability[9][9]{};
 
@@ -194,6 +200,8 @@ public:
 
         create_sudoku(0, 0, probability, sudoku);
         deleter(level);
+
+        return sudoku;
     }
 };
 
@@ -201,14 +209,14 @@ class sudoku_generator_diagonal final : public sudoku_generator
 {
     int sudoku[9][9]{};
 public:
-    void generate(const uint8_t level) override
-    {
-        for (int i = 0; i < 9; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                sudoku[i][j] = i + j;
-            }
-        }
-    }
+    // void generate(const uint8_t level) override
+    // {
+    //     for (int i = 0; i < 9; i++)
+    //     {
+    //         for (int j = 0; j < 9; j++)
+    //         {
+    //             sudoku[i][j] = i + j;
+    //         }
+    //     }
+    // }
 };
