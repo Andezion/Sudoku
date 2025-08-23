@@ -217,6 +217,12 @@ int main()
     // test_classic_sudoku_7();
     // test_classic_sudoku_8();
 
+    sudoku_generator_classic generator;
+    sudoku_show_classic show;
+
+    show.show(generator.generate(6));
+
+
 
     return 0;
 }

@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <array>
 #include <random>
-#include <cstring>
 
 class sudoku_generator
 {
@@ -27,7 +26,7 @@ class sudoku_generator_classic final : public sudoku_generator
 {
     std::array<std::array<int, 9>, 9> sudoku{};
 public:
-    static bool create_sudoku(int i, int j, std::vector<int> probability[9][9], std::array<std::array<int, 9>, 9> sudoku)
+    static bool create_sudoku(int i, int j, std::vector<int> probability[9][9], std::array<std::array<int, 9>, 9> & sudoku)
     {
         if (j == 9)
         {
@@ -66,7 +65,9 @@ public:
             }
         }
 
-        std::random_shuffle(candidates.begin(), candidates.end());
+
+        static std::mt19937 rng(std::random_device{}());
+        std::shuffle(candidates.begin(), candidates.end(), rng);
 
         for (const int num : candidates)
         {
