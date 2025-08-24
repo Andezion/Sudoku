@@ -82,26 +82,6 @@ public:
         return false;
     }
 
-    bool is_valid_sudoku(const int row, const int col, const int num) const override
-    {
-        for (int x = 0; x < 9; x++)
-        {
-            if (sudoku[row][x] == num)
-            {
-                return false;
-            }
-            if (sudoku[x][col] == num)
-            {
-                return false;
-            }
-            if (sudoku[row - row % 3 + x / 3][col - col % 3 + x % 3] == num)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
     bool solve_sudoku(int &solutions, const int limit = 2) override
     {
         int row = -1, col = -1;
@@ -210,14 +190,5 @@ class sudoku_generator_diagonal final : public sudoku_generator
 {
     int sudoku[9][9]{};
 public:
-    // void generate(const uint8_t level) override
-    // {
-    //     for (int i = 0; i < 9; i++)
-    //     {
-    //         for (int j = 0; j < 9; j++)
-    //         {
-    //             sudoku[i][j] = i + j;
-    //         }
-    //     }
-    // }
+
 };
