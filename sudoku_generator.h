@@ -6,17 +6,21 @@
 #include <array>
 #include <random>
 
+#include "sudoku_checker.h"
+
 class sudoku_generator
 {
+protected:
+    const sudoku_checker & checker;
 public:
-    virtual void deleter(uint8_t level) {}
+    explicit sudoku_generator(const sudoku_checker& checker)
+        : checker(checker) {}
 
+    virtual void deleter(uint8_t level) {}
     virtual std::array<std::array<int, 9>, 9> generate(const uint8_t level)
     {
         return {};
     }
-
-    virtual bool is_valid_sudoku(const int row, const int col, const int num) const { return false; }
     virtual bool solve_sudoku(int &solutions, const int limit = 2) { return false; }
 
     virtual ~sudoku_generator() {}
@@ -26,6 +30,9 @@ class sudoku_generator_classic final : public sudoku_generator
 {
     std::array<std::array<int, 9>, 9> sudoku{};
 public:
+    explicit sudoku_generator_classic(const sudoku_checker& checker)
+        : sudoku_generator(checker) {}
+
     static bool create_sudoku(int i, int j, std::vector<int> probability[9][9], std::array<std::array<int, 9>, 9> & sudoku)
     {
         if (j == 9)
@@ -108,7 +115,7 @@ public:
 
         for (int num = 1; num <= 9; num++)
         {
-            if (is_valid_sudoku(row, col, num))
+            if (checker.is_valid_sudoku(sudoku, row, col, num))
             {
                 sudoku[row][col] = num;
                 if (!solve_sudoku(solutions, limit))

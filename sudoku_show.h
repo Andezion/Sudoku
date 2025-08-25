@@ -4,7 +4,7 @@
 class sudoku_show
 {
 public:
-    virtual void show(const std::array<std::array<int, 9>, 9>& sudoku) {}
+    virtual void show(const std::array<std::array<int, 9>, 9> & sudoku) {}
 
     virtual ~sudoku_show() = default;
 };

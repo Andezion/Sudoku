@@ -1,10 +1,9 @@
 #pragma once
-#include <iostream>
 
 class sudoku_checker
 {
 public:
-    virtual bool is_valid_sudoku(const int row, const int col, const int num) const
+    virtual bool is_valid_sudoku(const std::array<std::array<int, 9>, 9> & sudoku, const int row, const int col, const int num) const
     {
         return false;
     };
@@ -14,9 +13,8 @@ public:
 
 class sudoku_checker_classic final : public sudoku_checker
 {
-    int sudoku[9][9]{};
 public:
-    bool is_valid_sudoku(const int row, const int col, const int num) const override
+    bool is_valid_sudoku(const std::array<std::array<int, 9>, 9> & sudoku, const int row, const int col, const int num) const override
     {
         for (int x = 0; x < 9; x++)
         {
