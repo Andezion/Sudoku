@@ -7,21 +7,22 @@
 #include <random>
 
 #include "sudoku_checker.h"
+#include "sudoku_solver.h"
 
 class sudoku_generator
 {
 protected:
+    const sudoku_solver & solver;
     const sudoku_checker & checker;
 public:
-    explicit sudoku_generator(const sudoku_checker& checker)
-        : checker(checker) {}
+    explicit sudoku_generator(const sudoku_checker& checker, const sudoku_solver& solver)
+        : solver(solver), checker(checker) {}
 
     virtual void deleter(uint8_t level) {}
     virtual std::array<std::array<int, 9>, 9> generate(const uint8_t level)
     {
         return {};
     }
-    virtual bool solve_sudoku(int &solutions, const int limit = 2) { return false; }
 
     virtual ~sudoku_generator() {}
 };
@@ -30,8 +31,8 @@ class sudoku_generator_classic final : public sudoku_generator
 {
     std::array<std::array<int, 9>, 9> sudoku{};
 public:
-    explicit sudoku_generator_classic(const sudoku_checker& checker)
-        : sudoku_generator(checker) {}
+    explicit sudoku_generator_classic(const sudoku_checker& checker, const sudoku_solver& solver)
+        : sudoku_generator(checker, solver) {}
 
     static bool create_sudoku(int i, int j, std::vector<int> probability[9][9], std::array<std::array<int, 9>, 9> & sudoku)
     {
@@ -50,7 +51,7 @@ public:
             return create_sudoku(i, j + 1, probability, sudoku);
         }
 
-        std::vector<int> candidates = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+        std::vector candidates = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
         for (int col = 0; col < 9; col++)
         {
@@ -72,7 +73,6 @@ public:
             }
         }
 
-
         static std::mt19937 rng(std::random_device{}());
         std::shuffle(candidates.begin(), candidates.end(), rng);
 
@@ -89,52 +89,9 @@ public:
         return false;
     }
 
-    bool solve_sudoku(int &solutions, const int limit = 2) override
-    {
-        int row = -1, col = -1;
-        bool empty_found = false;
-
-        for (int i = 0; i < 9 && !empty_found; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                if (sudoku[i][j] == 0)
-                {
-                    row = i; col = j;
-                    empty_found = true;
-                    break;
-                }
-            }
-        }
-
-        if (!empty_found)
-        {
-            solutions++;
-            return solutions < limit;
-        }
-
-        for (int num = 1; num <= 9; num++)
-        {
-            if (checker.is_valid_sudoku(sudoku, row, col, num))
-            {
-                sudoku[row][col] = num;
-                if (!solve_sudoku(solutions, limit))
-                {
-                    sudoku[row][col] = 0;
-                    return false;
-                }
-                sudoku[row][col] = 0;
-            }
-        }
-
-        return true;
-    }
-
     bool has_unique_solution()
     {
-        int solutions = 0;
-        solve_sudoku(solutions, 2);
-        return solutions == 1;
+        return solver.solve(sudoku);
     }
 
     void deleter(const uint8_t level) override
