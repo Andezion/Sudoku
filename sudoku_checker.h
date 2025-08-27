@@ -7,6 +7,10 @@ public:
     {
         return false;
     }
+    virtual bool is_valid_sudoku(const std::array<std::array<int, 16>, 16> & sudoku, const int row, const int col, const int num) const
+    {
+        return false;
+    }
 
     virtual ~sudoku_checker() = default;
 };
@@ -59,6 +63,30 @@ public:
                 return false;
             }
             if (sudoku[8 - x][x] == num)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
+class sudoku_checker_big final : public sudoku_checker
+{
+public:
+    bool is_valid_sudoku(const std::array<std::array<int, 16>, 16> & sudoku, const int row, const int col, const int num) const override
+    {
+        for (int x = 0; x < 16; x++)
+        {
+            if (sudoku[row][x] == num)
+            {
+                return false;
+            }
+            if (sudoku[x][col] == num)
+            {
+                return false;
+            }
+            if (sudoku[row - row % 3 + x / 3][col - col % 3 + x % 3] == num)
             {
                 return false;
             }

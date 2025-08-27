@@ -8,14 +8,13 @@
 
 int main()
 {
-    sudoku_checker_classic classic_checker;
-    sudoku_solver_classic solver(classic_checker);
-    sudoku_generator_classic generator(classic_checker,solver);
-    sudoku_show_classic show;
+    const sudoku_checker_big classic_checker;
+    const sudoku_solver_big solver(classic_checker);
+    sudoku_generator_big generator(classic_checker,solver);
+    sudoku_show_big show;
 
-    std::array<std::array<int, 9>, 9> sudoku = generator.generate(7);
+    std::array<std::array<int, 16>, 16> sudoku = generator.generate16(7);
     show.show(sudoku);
-
 
     solver.solve(sudoku);
     show.show(sudoku);

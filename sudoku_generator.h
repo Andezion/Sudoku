@@ -19,7 +19,12 @@ public:
         : solver(solver), checker(checker) {}
 
     virtual void deleter(uint8_t level) {}
-    virtual std::array<std::array<int, 9>, 9> generate(const uint8_t level)
+    virtual std::array<std::array<int, 9>, 9> generate9(const uint8_t level)
+    {
+        return {};
+    }
+
+    virtual std::array<std::array<int, 16>, 16> generate16(const uint8_t level)
     {
         return {};
     }
@@ -89,9 +94,52 @@ public:
         return false;
     }
 
-    bool has_unique_solution()
+    bool has_unique_solution(std::array<std::array<int, 9>, 9> sudoku) const
     {
-        return solver.solve(sudoku);
+        int count = 0;
+        count_solutions(sudoku, count, 2);
+        return count == 1;
+    }
+
+    void count_solutions(std::array<std::array<int, 9>, 9> & sudoku, int &count, const int limit) const
+    {
+        if (count >= limit)
+        {
+            return;
+        }
+
+        int row = -1, col = -1;
+        bool found = false;
+
+        for (int i = 0; i < 9 && !found; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                if (sudoku[i][j] == 0)
+                {
+                    row = i;
+                    col = j;
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        if (!found)
+        {
+            count++;
+            return;
+        }
+
+        for (int num = 1; num <= 9; num++)
+        {
+            if (checker.is_valid_sudoku(sudoku, row, col, num))
+            {
+                sudoku[row][col] = num;
+                count_solutions(sudoku, count, limit);
+                sudoku[row][col] = 0;
+            }
+        }
     }
 
     void deleter(const uint8_t level) override
@@ -120,7 +168,7 @@ public:
             const int backup = sudoku[i][j];
             sudoku[i][j] = 0;
 
-            if (!has_unique_solution())
+            if (!has_unique_solution(sudoku))
             {
                 sudoku[i][j] = backup;
             }
@@ -131,7 +179,7 @@ public:
         }
     }
 
-    std::array<std::array<int, 9>, 9> generate(const uint8_t level) override
+    std::array<std::array<int, 9>, 9> generate9(const uint8_t level) override
     {
         std::vector<int> probability[9][9]{};
 
@@ -155,4 +203,170 @@ class sudoku_generator_diagonal final : public sudoku_generator
     int sudoku[9][9]{};
 public:
 
+};
+
+class sudoku_generator_big final : public sudoku_generator
+{
+    std::array<std::array<int, 16>, 16> sudoku{};
+public:
+    explicit sudoku_generator_big(const sudoku_checker& checker, const sudoku_solver& solver)
+        : sudoku_generator(checker, solver) {}
+
+    static bool create_sudoku(int i, int j, std::vector<int> probability[16][16], std::array<std::array<int, 16>, 16> & sudoku)
+    {
+        if (j == 16)
+        {
+            j = 0;
+            i++;
+        }
+        if (i == 16)
+        {
+            return true;
+        }
+
+        if (sudoku[i][j] != 0)
+        {
+            return create_sudoku(i, j + 1, probability, sudoku);
+        }
+
+        std::vector candidates = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+
+        for (int col = 0; col < 16; col++)
+        {
+            candidates.erase(std::remove(candidates.begin(), candidates.end(), sudoku[i][col]), candidates.end());
+        }
+
+        for (int row = 0; row < 16; row++)
+        {
+            candidates.erase(std::remove(candidates.begin(), candidates.end(), sudoku[row][j]), candidates.end());
+        }
+
+        const int start_i = i / 4 * 4;
+        const int start_j = j / 4 * 4;
+        for (int r = start_i; r < start_i + 4; r++)
+        {
+            for (int c = start_j; c < start_j + 4; c++)
+            {
+                candidates.erase(std::remove(candidates.begin(), candidates.end(), sudoku[r][c]), candidates.end());
+            }
+        }
+
+        static std::mt19937 rng(std::random_device{}());
+        std::shuffle(candidates.begin(), candidates.end(), rng);
+
+        for (const int num : candidates)
+        {
+            sudoku[i][j] = num;
+            if (create_sudoku(i, j + 1, probability, sudoku))
+            {
+                return true;
+            }
+            sudoku[i][j] = 0;
+        }
+
+        return false;
+    }
+
+    bool has_unique_solution(std::array<std::array<int, 16>, 16> sudoku) const
+    {
+        int count = 0;
+        count_solutions(sudoku, count, 2);
+        return count == 1;
+    }
+
+    void count_solutions(std::array<std::array<int, 16>, 16> & sudoku, int &count, const int limit) const
+    {
+        if (count >= limit)
+        {
+            return;
+        }
+
+        int row = -1, col = -1;
+        bool found = false;
+
+        for (int i = 0; i < 16 && !found; i++)
+        {
+            for (int j = 0; j < 16; j++)
+            {
+                if (sudoku[i][j] == 0)
+                {
+                    row = i;
+                    col = j;
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        if (!found)
+        {
+            count++;
+            return;
+        }
+
+        for (int num = 1; num <= 16; num++)
+        {
+            if (checker.is_valid_sudoku(sudoku, row, col, num))
+            {
+                sudoku[row][col] = num;
+                count_solutions(sudoku, count, limit);
+                sudoku[row][col] = 0;
+            }
+        }
+    }
+
+    void deleter(const uint8_t level) override
+    {
+        static std::mt19937 rng(std::random_device{}());
+
+        std::vector<std::pair<int,int>> cells;
+        for (int i = 0; i < 16; i++)
+        {
+            for (int j = 0; j < 16; j++)
+            {
+                cells.emplace_back(i, j);
+            }
+        }
+
+        std::shuffle(cells.begin(), cells.end(), rng);
+
+        int to_remove = 20 + level * 5;
+        for (auto [i, j] : cells)
+        {
+            if (to_remove <= 0)
+            {
+                break;
+            }
+
+            const int backup = sudoku[i][j];
+            sudoku[i][j] = 0;
+
+            if (!has_unique_solution(sudoku))
+            {
+                sudoku[i][j] = backup;
+            }
+            else
+            {
+                to_remove--;
+            }
+        }
+    }
+
+    std::array<std::array<int, 16>, 16> generate16(const uint8_t level) override
+    {
+        std::vector<int> probability[16][16]{};
+
+        for (int i = 0; i < 16; i++)
+        {
+            for (int j = 0; j < 16; j++)
+            {
+                sudoku[i][j] = 0;
+            }
+        }
+
+        create_sudoku(0, 0, probability, sudoku);
+        deleter(level);
+
+        return sudoku;
+    }
 };
