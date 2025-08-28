@@ -86,7 +86,7 @@ public:
             {
                 return false;
             }
-            if (sudoku[row - row % 3 + x / 3][col - col % 3 + x % 3] == num)
+            if (sudoku[row - row % 4 + x / 4][col - col % 4 + x % 4] == num)
             {
                 return false;
             }

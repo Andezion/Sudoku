@@ -1,4 +1,5 @@
 #pragma once
+#include <iomanip>
 #include <iostream>
 
 class sudoku_show
@@ -65,22 +66,22 @@ class sudoku_show_big final : public sudoku_show
 public:
     void show(const std::array<std::array<int, 16>, 16> & sudoku) override
     {
-        std::cout << "======= SUDOKU  BIG =======" << std::endl;
+        std::cout << "====================    SUDOKU     BIG    ====================" << std::endl;
         for (int i = 0; i < 16; i++)
         {
             for (int j = 0; j < 16; j++)
             {
                 if (sudoku[i][j] != 0)
                 {
-                    std::cout << sudoku[i][j] << "  ";
+                    std::cout << std::setw(2) << sudoku[i][j] << "  ";
                 }
                 else
                 {
-                    std::cout << "_" << "  ";
+                    std::cout << std::setw(2) << "_" << "  ";
                 }
             }
             std::cout << std::endl;
         }
-        std::cout << "===============================" << std::endl;
+        std::cout << "==============================================================" << std::endl;
     }
 };
