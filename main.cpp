@@ -8,16 +8,26 @@
 
 int main()
 {
-    const sudoku_checker_big classic_checker;
-    const sudoku_solver_big solver(classic_checker);
-    sudoku_generator_big generator(classic_checker,solver);
-    sudoku_show_big show;
+    const sudoku_checker_diagonal classic_checker;
+    const sudoku_solver_diagonal solver(classic_checker);
+    sudoku_show_diagonal show;
 
-    std::array<std::array<int, 16>, 16> sudoku = generator.generate16(7);
-    show.show(sudoku);
+    std::array<std::array<int, 9>, 9> solution = {{
+        {{0, 0, 5, 1, 0, 4, 9, 0, 0}},
+        {{0, 0, 0, 8, 0, 3, 0, 0, 0}},
+        {{0, 0, 3, 0, 2, 0, 8, 0, 0}},
+        {{3, 0, 0, 0, 0, 0, 0, 0, 9}},
+        {{0, 0, 4, 0, 0, 0, 2, 0, 0}},
+        {{1, 0, 0, 0, 0, 0, 0, 0, 8}},
+        {{0, 0, 6, 0, 9, 0, 5, 0, 0}},
+        {{0, 0, 0, 6, 0, 1, 0, 0, 0}},
+        {{0, 0, 9, 5, 0, 2, 6, 0, 0}}
+    }};
 
-    solver.solve(sudoku);
-    show.show(sudoku);
+    show.show(solution);
+
+    solver.solve(solution);
+    show.show(solution);
 
     return 0;
 }
