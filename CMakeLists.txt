@@ -4,8 +4,6 @@ project(Sudoku)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(Sudoku main.cpp
-        sudoku_classic.h
-        sudoku_diagonal.h
         sudoku_generator.h
         sudoku_solver.h
         sudoku_checker.h
