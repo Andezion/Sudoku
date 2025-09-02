@@ -65,7 +65,8 @@ int main()
     }
     else
     {
-        throw("Error");
+        std::cerr << "Unknown sudoku type\n";
+        return 1;
     }
 
 
