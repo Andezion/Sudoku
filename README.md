@@ -29,19 +29,19 @@ The project was developed using **C++**, **Java**, **Docker**, and standard Andr
 Now I will demonstrate how my application works.
 
 Here is the initial screen:
-![Screenshot 1](screenshots/screen1.png)  
+![Screenshot 1](photos/photo1.png)  
 
 This is what the Generations page looks like before we make our selection:
-![Screenshot 1](screenshots/screen1.png)  
+![Screenshot 2](photos/photo2.png)  
 
 If we select the type of Sudoku we are interested in, we will see an image of it:
-![Screenshot 1](screenshots/screen1.png)  
+![Screenshot 3](photos/photo3.png)  
 
 Next, we can start solving the Sudoku puzzle and insert the suggested values:
-![Screenshot 1](screenshots/screen1.png)  
+![Screenshot 4](photos/photo4.png)  
 
 However, if we insert an incorrect value, we will not be able to leave it there: 
-![Screenshot 1](screenshots/screen1.png)  
+![Screenshot 5](photos/photo5.png)  
 
 ---
 
