@@ -1,5 +1,6 @@
 # Sudoku App
 
+
 ## Table of Contents
 * [General info](#general-info)
 * [Demonstration](#demonstration)
