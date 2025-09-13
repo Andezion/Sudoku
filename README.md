@@ -147,7 +147,7 @@ Notes
 
 
 ## Dockerfiles Explained
-Проект использует 4 контейнера: **cpp**, **java**, **res** и **final**. Ниже подробное описание каждого.
+The project uses four containers: **cpp**, **java**, **res**, and **final**. Below is a detailed description of each.
 
 ---
 
