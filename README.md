@@ -1,5 +1,5 @@
 # Sudoku App
-
+Sudoku game app and solver for diagonal and classic Sudoku
 
 ## Table of Contents
 * [General info](#general-info)
