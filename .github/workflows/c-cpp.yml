@@ -16,4 +16,4 @@ jobs:
         run: g++ -std=c++17 -Wall -Wextra -O2 main.cpp -o main
 
       - name: Run tests
-        run: ./main
+        run: echo "1\n1\n" | ./main
