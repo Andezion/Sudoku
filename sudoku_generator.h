@@ -18,6 +18,9 @@ public:
     explicit sudoku_generator(const sudoku_checker& checker, const sudoku_solver& solver)
         : solver(solver), checker(checker) {}
 
+    virtual void symmetrical_deleter() {}
+    virtual void controlled_deleter() {}
+    virtual void figure_deleter() {}
     virtual void deleter(uint8_t level) {}
     virtual std::array<std::array<int, 9>, 9> generate9(const uint8_t level)
     {
@@ -142,6 +145,46 @@ public:
         }
     }
 
+    void symmetrical_deleter() override
+    {
+        static std::mt19937 rng(std::random_device{}());
+
+        std::vector<std::pair<int,int>> cells;
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                cells.emplace_back(i, j);
+            }
+        }
+
+        std::shuffle(cells.begin(), cells.end(), rng);
+
+        int to_remove = 40;
+        for (auto [i, j] : cells)
+        {
+            if (to_remove <= 0)
+            {
+                break;
+            }
+
+            const int backup_one = sudoku[i][j];
+            const int backup_two = sudoku[8 - i][8 - j];
+            sudoku[i][j] = 0;
+            sudoku[8 - i][8 - j] = 0;
+
+            if (!has_unique_solution(sudoku))
+            {
+                sudoku[i][j] = backup_one;
+                sudoku[8 - i][8 - j] = backup_two;
+            }
+            else
+            {
+                to_remove -= 2;
+            }
+        }
+    }
+
     void deleter(const uint8_t level) override
     {
         static std::mt19937 rng(std::random_device{}());
@@ -192,7 +235,8 @@ public:
         }
 
         create_sudoku(0, 0, probability, sudoku);
-        deleter(level);
+        symmetrical_deleter();
+        //deleter(level);
 
         return sudoku;
     }
