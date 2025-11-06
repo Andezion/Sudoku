@@ -317,7 +317,9 @@ public:
         }
 
         create_sudoku(0, 0, probability, sudoku);
-        symmetrical_diagonal_deleter();
+        //symmetrical_horizontal_deleter();
+        symmetrical_vertical_deleter();
+        //symmetrical_diagonal_deleter();
         //deleter(level);
 
         return sudoku;
