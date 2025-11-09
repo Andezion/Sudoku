@@ -21,7 +21,7 @@ public:
     virtual void symmetrical_diagonal_deleter(uint8_t level) {}
     virtual void symmetrical_horizontal_deleter(uint8_t level) {}
     virtual void symmetrical_vertical_deleter(uint8_t level) {}
-    virtual void controlled_deleter() {}
+    virtual void controlled_deleter(const uint8_t level) {}
     virtual void figure_deleter() {}
     virtual void deleter(uint8_t level) {}
 
@@ -147,7 +147,7 @@ public:
         }
     }
 
-    void controlled_deleter() override
+    void controlled_deleter(const uint8_t level) override
     {
         static std::mt19937 rng(std::random_device{}());
 
@@ -162,7 +162,7 @@ public:
 
         std::shuffle(cells.begin(), cells.end(), rng);
 
-        int to_remove = 20;
+        int to_remove = 5 * level;
         for (auto [i, j] : cells)
         {
             if (to_remove <= 0)
@@ -365,12 +365,12 @@ public:
         }
 
         create_sudoku(0, 0, probability, sudoku);
-        //symmetrical_horizontal_deleter();
-        //symmetrical_vertical_deleter(level);
-        controlled_deleter();
-        //symmetrical_diagonal_deleter();
 
-        //deleter(level);
+        //symmetrical_horizontal_deleter(level);
+        //symmetrical_vertical_deleter(level);
+        controlled_deleter(level);
+        //symmetrical_diagonal_deleter(level);
+        deleter(level);
 
         return sudoku;
     }
