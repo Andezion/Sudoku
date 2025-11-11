@@ -366,10 +366,10 @@ public:
 
         create_sudoku(0, 0, probability, sudoku);
 
-        //symmetrical_horizontal_deleter(level);
-        //symmetrical_vertical_deleter(level);
-        controlled_deleter(level);
-        //symmetrical_diagonal_deleter(level);
+        // symmetrical_horizontal_deleter(level);
+        // symmetrical_vertical_deleter(level);
+        // controlled_deleter(level);
+        // symmetrical_diagonal_deleter(level);
         deleter(level);
 
         return sudoku;
@@ -501,6 +501,174 @@ public:
         }
     }
 
+    void controlled_deleter(const uint8_t level) override
+    {
+        static std::mt19937 rng(std::random_device{}());
+
+        std::vector<std::pair<int,int>> cells;
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                cells.emplace_back(i, j);
+            }
+        }
+
+        std::shuffle(cells.begin(), cells.end(), rng);
+
+        int to_remove = 5 * level;
+        for (auto [i, j] : cells)
+        {
+            if (to_remove <= 0)
+            {
+                break;
+            }
+
+            const int backup = sudoku[i][j];
+            const int backup_two = sudoku[8 - i][j];
+            const int backup_three = sudoku[i][8 - j];
+            const int backup_four = sudoku[8 - i][8 - j];
+
+
+            sudoku[i][j] = 0;
+            sudoku[8 - i][j] = 0;
+            sudoku[i][8 - j] = 0;
+            sudoku[8 - i][8 - j] = 0;
+
+            if (!has_unique_solution(sudoku))
+            {
+                sudoku[i][j] = backup;
+                sudoku[8 - i][j] = backup_two;
+                sudoku[i][8 - j] = backup_three;
+                sudoku[8 - i][8 - j] = backup_four;
+            }
+            else
+            {
+                to_remove -= 4;
+            }
+        }
+    }
+
+    void symmetrical_diagonal_deleter(const uint8_t level) override
+    {
+        static std::mt19937 rng(std::random_device{}());
+
+        std::vector<std::pair<int,int>> cells;
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                cells.emplace_back(i, j);
+            }
+        }
+
+        std::shuffle(cells.begin(), cells.end(), rng);
+
+        int to_remove = 20 + 5 * level;
+        for (auto [i, j] : cells)
+        {
+            if (to_remove <= 0)
+            {
+                break;
+            }
+
+            const int backup_one = sudoku[i][j];
+            const int backup_two = sudoku[8 - i][8 - j];
+            sudoku[i][j] = 0;
+            sudoku[8 - i][8 - j] = 0;
+
+            if (!has_unique_solution(sudoku))
+            {
+                sudoku[i][j] = backup_one;
+                sudoku[8 - i][8 - j] = backup_two;
+            }
+            else
+            {
+                to_remove -= 2;
+            }
+        }
+    }
+
+    void symmetrical_vertical_deleter(const uint8_t level) override
+    {
+        static std::mt19937 rng(std::random_device{}());
+
+        std::vector<std::pair<int,int>> cells;
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                cells.emplace_back(i, j);
+            }
+        }
+
+        std::shuffle(cells.begin(), cells.end(), rng);
+
+        int to_remove = 20 + level * 5;
+        for (auto [i, j] : cells)
+        {
+            if (to_remove <= 0)
+            {
+                break;
+            }
+
+            const int backup_one = sudoku[i][j];
+            const int backup_two = sudoku[i][8 - j];
+            sudoku[i][j] = 0;
+            sudoku[i][8 - j] = 0;
+
+            if (!has_unique_solution(sudoku))
+            {
+                sudoku[i][j] = backup_one;
+                sudoku[i][8 - j] = backup_two;
+            }
+            else
+            {
+                to_remove -= 2;
+            }
+        }
+    }
+
+    void symmetrical_horizontal_deleter(const uint8_t level) override
+    {
+        static std::mt19937 rng(std::random_device{}());
+
+        std::vector<std::pair<int,int>> cells;
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                cells.emplace_back(i, j);
+            }
+        }
+
+        std::shuffle(cells.begin(), cells.end(), rng);
+
+        int to_remove = 20 + level * 5;
+        for (auto [i, j] : cells)
+        {
+            if (to_remove <= 0)
+            {
+                break;
+            }
+
+            const int backup_one = sudoku[i][j];
+            const int backup_two = sudoku[8 - i][j];
+            sudoku[i][j] = 0;
+            sudoku[8 - i][j] = 0;
+
+            if (!has_unique_solution(sudoku))
+            {
+                sudoku[i][j] = backup_one;
+                sudoku[8 - i][j] = backup_two;
+            }
+            else
+            {
+                to_remove -= 2;
+            }
+        }
+    }
+
     void deleter(const uint8_t level) override
     {
         static std::mt19937 rng(std::random_device{}());
@@ -549,6 +717,12 @@ public:
         }
 
         create_sudoku(0, 0, sudoku);
+
+        // symmetrical_horizontal_deleter(level);
+        // symmetrical_vertical_deleter(level);
+        // controlled_deleter(level);
+        // symmetrical_diagonal_deleter(level);
+
         deleter(level);
 
         return sudoku;
@@ -665,6 +839,172 @@ public:
         }
     }
 
+    void controlled_deleter(const uint8_t level) override
+    {
+        static std::mt19937 rng(std::random_device{}());
+
+        std::vector<std::pair<int,int>> cells;
+        for (int i = 0; i < 16; i++)
+        {
+            for (int j = 0; j < 16; j++)
+            {
+                cells.emplace_back(i, j);
+            }
+        }
+
+        std::shuffle(cells.begin(), cells.end(), rng);
+
+        int to_remove = 10 * level;
+        for (auto [i, j] : cells)
+        {
+            if (to_remove <= 0)
+            {
+                break;
+            }
+
+            const int backup = sudoku[i][j];
+            const int backup_two = sudoku[15 - i][j];
+            const int backup_three = sudoku[i][15 - j];
+            const int backup_four = sudoku[15 - i][15 - j];
+
+
+            sudoku[i][j] = 0;
+            sudoku[15 - i][j] = 0;
+            sudoku[i][15 - j] = 0;
+            sudoku[15 - i][15 - j] = 0;
+
+            if (!has_unique_solution(sudoku))
+            {
+                sudoku[i][j] = backup;
+                sudoku[15 - i][j] = backup_two;
+                sudoku[i][15 - j] = backup_three;
+                sudoku[15 - i][15 - j] = backup_four;
+            }
+            else
+            {
+                to_remove -= 4;
+            }
+        }
+    }
+
+    void symmetrical_diagonal_deleter(const uint8_t level) override
+    {
+        static std::mt19937 rng(std::random_device{}());
+
+        std::vector<std::pair<int,int>> cells;
+        for (int i = 0; i < 16; i++)
+        {
+            for (int j = 0; j < 16; j++)
+            {
+                cells.emplace_back(i, j);
+            }
+        }
+        std::shuffle(cells.begin(), cells.end(), rng);
+
+        int to_remove = 40 + 5 * level;
+        for (auto [i, j] : cells)
+        {
+            if (to_remove <= 0)
+            {
+                break;
+            }
+
+            const int backup_one = sudoku[i][j];
+            const int backup_two = sudoku[15 - i][15 - j];
+            sudoku[i][j] = 0;
+            sudoku[15 - i][15 - j] = 0;
+
+            if (!has_unique_solution(sudoku))
+            {
+                sudoku[i][j] = backup_one;
+                sudoku[15 - i][15 - j] = backup_two;
+            }
+            else
+            {
+                to_remove -= 2;
+            }
+        }
+    }
+
+    void symmetrical_vertical_deleter(const uint8_t level) override
+    {
+        static std::mt19937 rng(std::random_device{}());
+
+        std::vector<std::pair<int,int>> cells;
+        for (int i = 0; i < 16; i++)
+        {
+            for (int j = 0; j < 16; j++)
+            {
+                cells.emplace_back(i, j);
+            }
+        }
+        std::shuffle(cells.begin(), cells.end(), rng);
+
+        int to_remove = 40 + level * 5;
+        for (auto [i, j] : cells)
+        {
+            if (to_remove <= 0)
+            {
+                break;
+            }
+
+            const int backup_one = sudoku[i][j];
+            const int backup_two = sudoku[i][15 - j];
+            sudoku[i][j] = 0;
+            sudoku[i][15 - j] = 0;
+
+            if (!has_unique_solution(sudoku))
+            {
+                sudoku[i][j] = backup_one;
+                sudoku[i][15 - j] = backup_two;
+            }
+            else
+            {
+                to_remove -= 2;
+            }
+        }
+    }
+
+    void symmetrical_horizontal_deleter(const uint8_t level) override
+    {
+        static std::mt19937 rng(std::random_device{}());
+
+        std::vector<std::pair<int,int>> cells;
+        for (int i = 0; i < 16; i++)
+        {
+            for (int j = 0; j < 16; j++)
+            {
+                cells.emplace_back(i, j);
+            }
+        }
+
+        std::shuffle(cells.begin(), cells.end(), rng);
+
+        int to_remove = 40 + level * 5;
+        for (auto [i, j] : cells)
+        {
+            if (to_remove <= 0)
+            {
+                break;
+            }
+
+            const int backup_one = sudoku[i][j];
+            const int backup_two = sudoku[15 - i][j];
+            sudoku[i][j] = 0;
+            sudoku[15 - i][j] = 0;
+
+            if (!has_unique_solution(sudoku))
+            {
+                sudoku[i][j] = backup_one;
+                sudoku[15 - i][j] = backup_two;
+            }
+            else
+            {
+                to_remove -= 2;
+            }
+        }
+    }
+
     void deleter(const uint8_t level) override
     {
         static std::mt19937 rng(std::random_device{}());
@@ -680,7 +1020,7 @@ public:
 
         std::shuffle(cells.begin(), cells.end(), rng);
 
-        int to_remove = 20 + level * 5;
+        int to_remove = 40 + level * 5;
         for (auto [i, j] : cells)
         {
             if (to_remove <= 0)
