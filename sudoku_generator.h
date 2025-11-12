@@ -844,9 +844,9 @@ public:
         static std::mt19937 rng(std::random_device{}());
 
         std::vector<std::pair<int,int>> cells;
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i < 8; i++)
         {
-            for (int j = 0; j < 16; j++)
+            for (int j = 0; j < 8; j++)
             {
                 cells.emplace_back(i, j);
             }
@@ -1055,7 +1055,13 @@ public:
         }
 
         create_sudoku(0, 0, probability, sudoku);
-        deleter(level);
+
+        // symmetrical_horizontal_deleter(level);
+        // symmetrical_vertical_deleter(level);
+        controlled_deleter(level);
+        // symmetrical_diagonal_deleter(level);
+
+        // deleter(level);
 
         return sudoku;
     }
