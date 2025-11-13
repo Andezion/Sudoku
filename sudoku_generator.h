@@ -1066,3 +1066,13 @@ public:
         return sudoku;
     }
 };
+
+class sudoku_generator_samurai final : public sudoku_generator
+{
+    std::array<std::array<int, 21>, 21> sudoku{};
+public:
+    explicit sudoku_generator_samurai(const sudoku_checker& checker, const sudoku_solver& solver)
+        : sudoku_generator(checker, solver) {}
+
+
+};
