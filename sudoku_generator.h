@@ -33,6 +33,10 @@ public:
     {
         return {};
     }
+    virtual std::array<std::array<int, 21>, 21> generate21(const uint8_t level)
+    {
+        return {};
+    }
 
     virtual ~sudoku_generator() {}
 };
@@ -1074,5 +1078,48 @@ public:
     explicit sudoku_generator_samurai(const sudoku_checker& checker, const sudoku_solver& solver)
         : sudoku_generator(checker, solver) {}
 
+    static bool create_sudoku(int i, int j, std::vector<int> probability[21][21], std::array<std::array<int, 21>, 21> & sudoku)
+    {
 
+    }
+
+    bool has_unique_solution(std::array<std::array<int, 21>, 21> sudoku) const
+    {
+
+    }
+
+    void count_solutions(std::array<std::array<int, 21>, 21> & sudoku, int &count, const int limit) const
+    {
+
+    }
+
+    void controlled_deleter(const uint8_t level) override
+    {
+
+    }
+
+    void symmetrical_diagonal_deleter(const uint8_t level) override
+    {
+
+    }
+
+    void symmetrical_vertical_deleter(const uint8_t level) override
+    {
+
+    }
+
+    void symmetrical_horizontal_deleter(const uint8_t level) override
+    {
+
+    }
+
+    void deleter(const uint8_t level) override
+    {
+
+    }
+
+    std::array<std::array<int, 21>, 21> generate21(const uint8_t level) override
+    {
+
+    }
 };
