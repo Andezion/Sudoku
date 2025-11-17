@@ -18,6 +18,10 @@ public:
     {
         return false;
     };
+    virtual bool solve(std::array<std::array<int, 21>, 21> & sudoku) const
+    {
+        return false;
+    };
     virtual ~sudoku_solver() = default;
 };
 
@@ -171,5 +175,17 @@ public:
         }
 
         return false;
+    }
+};
+
+class sudoku_solver_samurai final : public sudoku_solver
+{
+public:
+    explicit sudoku_solver_samurai(const sudoku_checker& checker)
+        : sudoku_solver(checker) {}
+
+    bool solve(std::array<std::array<int, 21>, 21> & sudoku) const override
+    {
+
     }
 };

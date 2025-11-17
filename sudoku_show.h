@@ -7,6 +7,7 @@ class sudoku_show
 public:
     virtual void show(const std::array<std::array<int, 9>, 9> & sudoku) {}
     virtual void show(const std::array<std::array<int, 16>, 16> & sudoku) {}
+    virtual void show(const std::array<std::array<int, 21>, 21> & sudoku) {}
 
     virtual ~sudoku_show() = default;
 };
@@ -74,6 +75,35 @@ public:
                 if (sudoku[i][j] != 0)
                 {
                     std::cout << std::setw(2) << sudoku[i][j] << "  ";
+                }
+                else
+                {
+                    std::cout << std::setw(2) << "_" << "  ";
+                }
+            }
+            std::cout << std::endl;
+        }
+        std::cout << "==============================================================" << std::endl;
+    }
+};
+
+class sudoku_show_samurai final : public sudoku_show
+{
+public:
+    void show(const std::array<std::array<int, 21>, 21> & sudoku) override
+    {
+        std::cout << "====================    SUDOKU     BIG    ====================" << std::endl;
+        for (int i = 0; i < 21; i++)
+        {
+            for (int j = 0; j < 21; j++)
+            {
+                if (sudoku[i][j] != 0)
+                {
+                    std::cout << std::setw(2) << sudoku[i][j] << "  ";
+                }
+                else if (sudoku[i][j] == -1)
+                {
+                    std::cout << std::setw(2) << " " << "  ";
                 }
                 else
                 {
