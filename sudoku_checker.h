@@ -13,6 +13,11 @@ public:
     {
         return false;
     }
+    virtual bool is_valid_sudoku(const std::array<std::array<int, 21>, 21> & sudoku,
+        const int row, const int col, const int num) const
+    {
+        return false;
+    }
 
     virtual ~sudoku_checker() = default;
 };
@@ -109,5 +114,15 @@ public:
             }
         }
         return true;
+    }
+};
+
+class sudoku_checker_samurai final : public sudoku_checker
+{
+public:
+    bool is_valid_sudoku(const std::array<std::array<int, 21>, 21> & sudoku,
+     const int row, const int col, const int num) const override
+    {
+        return false;
     }
 };
