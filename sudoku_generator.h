@@ -1139,5 +1139,16 @@ public:
                 }
             }
         }
+
+        create_sudoku(0, 0, probability, sudoku);
+
+        // symmetrical_horizontal_deleter(level);
+        // symmetrical_vertical_deleter(level);
+        controlled_deleter(level);
+        // symmetrical_diagonal_deleter(level);
+
+        // deleter(level);
+
+        return sudoku;
     }
 };
