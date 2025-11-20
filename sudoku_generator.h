@@ -1120,6 +1120,24 @@ public:
 
     std::array<std::array<int, 21>, 21> generate21(const uint8_t level) override
     {
+        std::vector<int> probability[21][21]{};
 
+        for (int i = 0; i < 16; i++)
+        {
+            for (int j = 0; j < 16; j++)
+            {
+                if ((i >= 0 && i < 6 && j >= 9 && j < 13) ||
+                    (i >= 9 && i < 13 && j >= 0 && j < 6) ||
+                    (i >= 15 && i < 21 && j >= 9 && j < 13) ||
+                    (i >= 9 && i < 13 && j >= 15 && j < 21))
+                {
+                    sudoku[i][j] = -1;
+                }
+                else
+                {
+                    sudoku[i][j] = 0;
+                }
+            }
+        }
     }
 };
