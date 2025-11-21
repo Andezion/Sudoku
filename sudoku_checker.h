@@ -121,8 +121,61 @@ class sudoku_checker_samurai final : public sudoku_checker
 {
 public:
     bool is_valid_sudoku(const std::array<std::array<int, 21>, 21> & sudoku,
-     const int row, const int col, const int num) const override
+                         const int row, const int col, const int num) const override
     {
-        return false;
+        int r0 = -1, c0 = -1;
+        if (row >= 0 && row <= 8 && col >= 0 && col <= 8)
+        {
+            r0 = 0, c0 = 0;
+        }
+        else if (row >= 0 && row <= 8 && col >= 12 && col <= 20)
+        {
+            r0 = 0, c0 = 12;
+        }
+        else if (row >= 6 && row <= 14 && col >= 6 && col <= 14)
+        {
+            r0 = 6, c0 = 6;
+        }
+        else if (row >= 12 && row <= 20 && col >= 0 && col <= 8)
+        {
+            r0 = 12, c0 = 0;
+        }
+        else if (row >= 12 && row <= 20 && col >= 12 && col <= 20)
+        {
+            r0 = 12, c0 = 12;
+        }
+        else
+        {
+            return true;
+        }
+
+        for (int i = 0; i < 9; i++)
+        {
+            if (sudoku[row][c0 + i] == num)
+            {
+                return false;
+            }
+
+            if (sudoku[r0 + i][col] == num)
+            {
+                return false;
+            }
+        }
+
+        const int br = r0 + (row - r0) / 3 * 3;
+        const int bc = c0 + (col - c0) / 3 * 3;
+
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (sudoku[br + i][bc + j] == num)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 };
