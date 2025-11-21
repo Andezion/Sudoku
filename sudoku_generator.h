@@ -1122,20 +1122,29 @@ public:
     {
         std::vector<int> probability[21][21]{};
 
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i < 21; i++)
         {
-            for (int j = 0; j < 16; j++)
+            for (int j = 0; j < 21; j++)
             {
-                if ((i >= 0 && i < 6 && j >= 9 && j < 13) ||
-                    (i >= 9 && i < 13 && j >= 0 && j < 6) ||
-                    (i >= 15 && i < 21 && j >= 9 && j < 13) ||
-                    (i >= 9 && i < 13 && j >= 15 && j < 21))
+                const bool ok =
+                       // top-left
+                       (i >= 0  && i <= 8  && j >= 0  && j <= 8) ||
+                       // top-right
+                       (i >= 0  && i <= 8  && j >= 12 && j <= 20) ||
+                       // center
+                       (i >= 6  && i <= 14 && j >= 6  && j <= 14) ||
+                       // bottom-left
+                       (i >= 12 && i <= 20 && j >= 0  && j <= 8) ||
+                       // bottom-right
+                       (i >= 12 && i <= 20 && j >= 12 && j <= 20);
+
+                if (ok)
                 {
-                    sudoku[i][j] = -1;
+                    sudoku[i][j] = 0;
                 }
                 else
                 {
-                    sudoku[i][j] = 0;
+                    sudoku[i][j] = -1;
                 }
             }
         }
