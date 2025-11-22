@@ -123,7 +123,7 @@ public:
     bool is_valid_sudoku(const std::array<std::array<int, 21>, 21> & sudoku,
                          const int row, const int col, const int num) const override
     {
-        int r0 = -1, c0 = -1;
+        int r0{}, c0{};
         if (row >= 0 && row <= 8 && col >= 0 && col <= 8)
         {
             r0 = 0, c0 = 0;

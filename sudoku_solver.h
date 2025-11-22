@@ -186,6 +186,43 @@ public:
 
     bool solve(std::array<std::array<int, 21>, 21> & sudoku) const override
     {
+        int row = -1, col = -1;
+        bool found_empty = false;
 
+        for (int i = 0; i < 21 && !found_empty; i++)
+        {
+            for (int j = 0; j < 21; j++)
+            {
+                if (sudoku[i][j] == 0)
+                {
+                    row = i;
+                    col = j;
+                    found_empty = true;
+                    break;
+                }
+            }
+        }
+
+        if (!found_empty)
+        {
+            return true;
+        }
+
+        for (int num = 1; num <= 9; num++)
+        {
+            if (checker.is_valid_sudoku(sudoku, row, col, num))
+            {
+                sudoku[row][col] = num;
+
+                if (solve(sudoku))
+                {
+                    return true;
+                }
+
+                sudoku[row][col] = 0;
+            }
+        }
+
+        return false;
     }
 };
