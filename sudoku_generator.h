@@ -1115,8 +1115,52 @@ public:
 
     void deleter(const uint8_t level) override
     {
+        static std::mt19937 rng(std::random_device{}());
 
+        std::vector<std::pair<int,int>> cells;
+
+        auto add_block = [&](const int r1, const int r2, const int c1, const int c2)
+        {
+            for (int i = r1; i <= r2; i++)
+            {
+                for (int j = c1; j <= c2; j++)
+                {
+                    cells.emplace_back(i, j);
+                }
+            }
+        };
+
+        add_block(0, 8, 0, 8);
+        add_block(0, 8, 12, 20);
+        add_block(6, 14, 6, 14);
+        add_block(12, 20, 0, 8);
+        add_block(12, 20, 12, 20);
+
+        std::shuffle(cells.begin(), cells.end(), rng);
+
+        int to_remove = 40 + level * 5;
+
+        for (auto [i, j] : cells)
+        {
+            if (to_remove <= 0)
+            {
+                break;
+            }
+
+            const int backup = sudoku[i][j];
+            sudoku[i][j] = 0;
+
+            if (!has_unique_solution(sudoku))
+            {
+                sudoku[i][j] = backup;
+            }
+            else
+            {
+                to_remove--;
+            }
+        }
     }
+
 
     std::array<std::array<int, 21>, 21> generate21(const uint8_t level) override
     {
@@ -1127,15 +1171,10 @@ public:
             for (int j = 0; j < 21; j++)
             {
                 const bool ok =
-                       // top-left
                        (i >= 0  && i <= 8  && j >= 0  && j <= 8) ||
-                       // top-right
                        (i >= 0  && i <= 8  && j >= 12 && j <= 20) ||
-                       // center
                        (i >= 6  && i <= 14 && j >= 6  && j <= 14) ||
-                       // bottom-left
                        (i >= 12 && i <= 20 && j >= 0  && j <= 8) ||
-                       // bottom-right
                        (i >= 12 && i <= 20 && j >= 12 && j <= 20);
 
                 if (ok)
