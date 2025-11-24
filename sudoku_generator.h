@@ -1078,9 +1078,118 @@ public:
     explicit sudoku_generator_samurai(const sudoku_checker& checker, const sudoku_solver& solver)
         : sudoku_generator(checker, solver) {}
 
+
+    static bool is_valid_cell(const int i, const int j)
+    {
+        if (i < 9 && j < 9) return true;
+        if (i < 9 && j >= 12 && j < 21) return true;
+        if (i >= 6 && i < 15 && j >= 6 && j < 15) return true;
+        if (i >= 12 && i < 21 && j < 9) return true;
+        if (i >= 12 && i < 21 && j >= 12 && j < 21) return true;
+
+        return false;
+    }
+
+    static void get_box_start(const int i, const int j, int& start_i, int& start_j)
+    {
+        if (i < 9 && j < 9)
+        {
+            start_i = (i / 3) * 3;
+            start_j = (j / 3) * 3;
+        }
+        else if (i < 9 && j >= 12)
+        {
+            start_i = (i / 3) * 3;
+            start_j = ((j - 12) / 3) * 3 + 12;
+        }
+        else if (i >= 6 && i < 15 && j >= 6 && j < 15)
+        {
+            start_i = ((i - 6) / 3) * 3 + 6;
+            start_j = ((j - 6) / 3) * 3 + 6;
+        }
+        else if (i >= 12 && j < 9)
+        {
+            start_i = ((i - 12) / 3) * 3 + 12;
+            start_j = (j / 3) * 3;
+        }
+        else if (i >= 12 && j >= 12)
+        {
+            start_i = ((i - 12) / 3) * 3 + 12;
+            start_j = ((j - 12) / 3) * 3 + 12;
+        }
+    }
+
     static bool create_sudoku(int i, int j, std::vector<int> probability[21][21], std::array<std::array<int, 21>, 21> & sudoku)
     {
+        while (i < 21)
+        {
+            while (j < 21 && !is_valid_cell(i, j))
+            {
+                j++;
+            }
 
+            if (j < 21) break;
+
+            j = 0;
+            i++;
+        }
+
+        if (i == 21)
+        {
+            return true;
+        }
+
+        if (sudoku[i][j] != 0)
+        {
+            return create_sudoku(i, j + 1, probability, sudoku);
+        }
+
+        std::vector candidates = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+        for (int col = 0; col < 21; col++)
+        {
+            if (is_valid_cell(i, col))
+            {
+                candidates.erase(std::remove(candidates.begin(), candidates.end(),
+                               sudoku[i][col]), candidates.end());
+            }
+        }
+
+        for (int row = 0; row < 21; row++)
+        {
+            if (is_valid_cell(row, j))
+            {
+                candidates.erase(std::remove(candidates.begin(), candidates.end(),
+                               sudoku[row][j]), candidates.end());
+            }
+        }
+
+        int start_i, start_j;
+        get_box_start(i, j, start_i, start_j);
+
+        for (int r = start_i; r < start_i + 3; r++)
+        {
+            for (int c = start_j; c < start_j + 3; c++)
+            {
+                candidates.erase(std::remove(candidates.begin(), candidates.end(),
+                               sudoku[r][c]), candidates.end());
+            }
+        }
+
+        static std::mt19937 rng(std::random_device{}());
+        std::shuffle(candidates.begin(), candidates.end(), rng);
+
+        for (const int num : candidates)
+        {
+            sudoku[i][j] = num;
+            if (create_sudoku(i, j + 1, probability, sudoku))
+            {
+                return true;
+            }
+            sudoku[i][j] = 0;
+        }
+
+        return false;
     }
 
     bool has_unique_solution(std::array<std::array<int, 21>, 21> sudoku) const
