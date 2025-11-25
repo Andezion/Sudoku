@@ -1199,7 +1199,43 @@ public:
 
     void count_solutions(std::array<std::array<int, 21>, 21> & sudoku, int &count, const int limit) const
     {
+        if (count >= limit)
+        {
+            return;
+        }
 
+        int row = -1, col = -1;
+        bool found = false;
+
+        for (int i = 0; i < 21 && !found; i++)
+        {
+            for (int j = 0; j < 21; j++)
+            {
+                if (is_valid_cell(i, j) && sudoku[i][j] == 0)
+                {
+                    row = i;
+                    col = j;
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        if (!found)
+        {
+            count++;
+            return;
+        }
+
+        for (int num = 1; num <= 9; num++)
+        {
+            if (checker.is_valid_sudoku(sudoku, row, col, num))
+            {
+                sudoku[row][col] = num;
+                count_solutions(sudoku, count, limit);
+                sudoku[row][col] = 0;
+            }
+        }
     }
 
     void controlled_deleter(const uint8_t level) override
