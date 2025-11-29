@@ -63,6 +63,24 @@ int main()
         solver.solve(sudoku);
         show.show(sudoku);
     }
+    else if (type_sudoku == 4)
+    {
+        const sudoku_checker_samurai checker;
+        const sudoku_solver_samurai solver(checker);
+        sudoku_generator_samurai generator(checker, solver);
+        sudoku_show_samurai show;
+
+        int level{};
+        std::cout << "Enter level of the sudoku: ";
+        std::cin >> level;
+
+        std::array<std::array<int, 21>, 21> sudoku = generator.generate21(level);
+
+        show.show(sudoku);
+
+        solver.solve(sudoku);
+        show.show(sudoku);
+    }
     else
     {
         std::cerr << "Unknown sudoku type\n";
