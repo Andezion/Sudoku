@@ -92,7 +92,7 @@ class sudoku_show_samurai final : public sudoku_show
 public:
     void show(const std::array<std::array<int, 21>, 21> & sudoku) override
     {
-        std::cout << "========================    SUDOKU     SAMURAI    =======================" << std::endl;
+        std::cout << "========================       SUDOKU        SAMURAI       =======================" << std::endl;
         for (int i = 0; i < 21; i++)
         {
             for (int j = 0; j < 21; j++)
@@ -112,6 +112,6 @@ public:
             }
             std::cout << std::endl;
         }
-        std::cout << "==================================================================" << std::endl;
+        std::cout << "==================================================================================" << std::endl;
     }
 };
