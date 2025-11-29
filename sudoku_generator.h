@@ -1194,7 +1194,9 @@ public:
 
     bool has_unique_solution(std::array<std::array<int, 21>, 21> sudoku) const
     {
-
+        int count = 0;
+        count_solutions(sudoku, count, 2);
+        return count == 1;
     }
 
     void count_solutions(std::array<std::array<int, 21>, 21> & sudoku, int &count, const int limit) const
@@ -1305,7 +1307,6 @@ public:
             }
         }
     }
-
 
     std::array<std::array<int, 21>, 21> generate21(const uint8_t level) override
     {
