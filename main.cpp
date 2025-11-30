@@ -1,10 +1,21 @@
 #include "sudoku_generator.h"
 #include "sudoku_show.h"
 #include "sudoku_solver.h"
+#include "raylib.h"
 
 
 int main()
 {
+
+    InitWindow(800, 600, "Sudoku with raylib");
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+        DrawText("Raylib подключен", 20, 20, 30, BLACK);
+        EndDrawing();
+    }
+    CloseWindow();
+
     int type_sudoku{};
     std::cout << "Enter type of sudoku: ";
     std::cin >> type_sudoku;
