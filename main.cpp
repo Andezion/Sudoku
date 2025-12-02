@@ -3,20 +3,20 @@
 #include "sudoku_solver.h"
 #include "raylib.h"
 
+constexpr int screenWidth = 800;
+constexpr int screenHeight = 800;
+
+constexpr int gridSize = 9;
+constexpr int cellSize = 60;
+constexpr int gridPixelSize = gridSize * cellSize;
+
+constexpr int offsetX = (screenWidth - gridPixelSize) / 2;
+constexpr int offsetY = (screenHeight - gridPixelSize) / 2;
+
 int main()
 {
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 800;
-
     InitWindow(screenWidth, screenHeight, "Sudoku Grid (raylib)");
     SetTargetFPS(60);
-
-    constexpr int gridSize = 9;
-    const int cellSize = 60;
-    const int gridPixelSize = gridSize * cellSize;
-
-    const int offsetX = (screenWidth - gridPixelSize) / 2;
-    const int offsetY = (screenHeight - gridPixelSize) / 2;
 
     while (!WindowShouldClose())
     {
@@ -31,15 +31,15 @@ int main()
             const int thickness = i % blockSize != 0 ? 1 : 4;
 
             DrawLineEx(
-                {(float)offsetX, (float)(offsetY + i * cellSize)},
-                {(float)(offsetX + gridPixelSize), (float)(offsetY + i * cellSize)},
+                {static_cast<float>(offsetX), static_cast<float>(offsetY + i * cellSize)},
+                {static_cast<float>(offsetX + gridPixelSize), static_cast<float>(offsetY + i * cellSize)},
                 thickness,
                 BLACK
             );
 
             DrawLineEx(
-                {(float)(offsetX + i * cellSize), (float)offsetY},
-                {(float)(offsetX + i * cellSize), (float)(offsetY + gridPixelSize)},
+                {static_cast<float>(offsetX + i * cellSize), static_cast<float>(offsetY)},
+                {static_cast<float>(offsetX + i * cellSize), static_cast<float>(offsetY + gridPixelSize)},
                 thickness,
                 BLACK
             );
