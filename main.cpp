@@ -3,14 +3,14 @@
 #include "sudoku_solver.h"
 #include "raylib.h"
 
-constexpr int screenWidth = 800;
+constexpr int screenWidth = 1000;
 constexpr int screenHeight = 800;
 
 constexpr int gridSize = 9;
 constexpr int cellSize = 60;
 constexpr int gridPixelSize = gridSize * cellSize;
 
-constexpr int offsetX = (screenWidth - gridPixelSize) / 2;
+constexpr int offsetX = (screenWidth - 200 - gridPixelSize) / 2;
 constexpr int offsetY = (screenHeight - gridPixelSize) / 2;
 
 int main()
@@ -24,6 +24,19 @@ int main()
         ClearBackground(RAYWHITE);
 
         DrawText("Sudoku grid", 20, 20, 20, DARKGRAY);
+
+        Rectangle btn = { 800, 100, 150, 50 };
+        Vector2 mouse = GetMousePosition();
+        bool hover = CheckCollisionPointRec(mouse, btn);
+
+        Color color = hover ? SKYBLUE : LIGHTGRAY;
+        DrawRectangleRec(btn, color);
+        DrawText("Click me", btn.x + 20, btn.y + 15, 20, DARKGRAY);
+
+        if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            // что-то делаем
+        }
 
         for (int i = 0; i <= gridSize; i++)
         {
