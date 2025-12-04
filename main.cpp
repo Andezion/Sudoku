@@ -15,13 +15,13 @@ constexpr int offsetY = (screenHeight - gridPixelSize) / 2;
 
 int buttons_handler()
 {
-    Rectangle btn = { 800, 100, 150, 50 };
-    Vector2 mouse = GetMousePosition();
-    bool hover = CheckCollisionPointRec(mouse, btn);
+    constexpr Rectangle button_classic = { 800, 100, 150, 50 };
+    const Vector2 mouse_classic = GetMousePosition();
+    const bool hover_classic = CheckCollisionPointRec(mouse_classic, button_classic);
 
-    Color color = hover ? SKYBLUE : LIGHTGRAY;
-    DrawRectangleRec(btn, color);
-    DrawText("Classic", btn.x + 20, btn.y + 15, 20, DARKGRAY);
+    const Color color = hover_classic ? SKYBLUE : LIGHTGRAY;
+    DrawRectangleRec(button_classic, color);
+    DrawText("Classic", button_classic.x + 20, button_classic.y + 15, 20, DARKGRAY);
 
     Rectangle btn1 = { 800, 200, 150, 50 };
     Vector2 mouse1 = GetMousePosition();
@@ -31,7 +31,7 @@ int buttons_handler()
     DrawRectangleRec(btn1, color1);
     DrawText("Diagonal", btn1.x + 20, btn1.y + 15, 20, DARKGRAY);
 
-    if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+    if (hover_classic && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
     {
         // что-то делаем
     }
