@@ -13,6 +13,37 @@ constexpr int gridPixelSize = gridSize * cellSize;
 constexpr int offsetX = (screenWidth - 200 - gridPixelSize) / 2;
 constexpr int offsetY = (screenHeight - gridPixelSize) / 2;
 
+int buttons_handler()
+{
+    Rectangle btn = { 800, 100, 150, 50 };
+    Vector2 mouse = GetMousePosition();
+    bool hover = CheckCollisionPointRec(mouse, btn);
+
+    Color color = hover ? SKYBLUE : LIGHTGRAY;
+    DrawRectangleRec(btn, color);
+    DrawText("Classic", btn.x + 20, btn.y + 15, 20, DARKGRAY);
+
+    Rectangle btn1 = { 800, 200, 150, 50 };
+    Vector2 mouse1 = GetMousePosition();
+    bool hover1 = CheckCollisionPointRec(mouse1, btn1);
+
+    Color color1 = hover1 ? SKYBLUE : LIGHTGRAY;
+    DrawRectangleRec(btn1, color1);
+    DrawText("Diagonal", btn1.x + 20, btn1.y + 15, 20, DARKGRAY);
+
+    if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+    {
+        // что-то делаем
+    }
+
+    if (hover1 && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+    {
+        // do smth with second button
+    }
+
+    return 0;
+}
+
 int main()
 {
     InitWindow(screenWidth, screenHeight, "Sudoku Grid (raylib)");
@@ -25,18 +56,7 @@ int main()
 
         DrawText("Sudoku grid", 20, 20, 20, DARKGRAY);
 
-        Rectangle btn = { 800, 100, 150, 50 };
-        Vector2 mouse = GetMousePosition();
-        bool hover = CheckCollisionPointRec(mouse, btn);
-
-        Color color = hover ? SKYBLUE : LIGHTGRAY;
-        DrawRectangleRec(btn, color);
-        DrawText("Click me", btn.x + 20, btn.y + 15, 20, DARKGRAY);
-
-        if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-        {
-            // что-то делаем
-        }
+        buttons_handler();
 
         for (int i = 0; i <= gridSize; i++)
         {
