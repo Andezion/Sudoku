@@ -84,6 +84,14 @@ int main()
 
         buttons_handler();
 
+        DrawLineEx({offsetX, offsetY},
+            {offsetX + gridSize * cellSize, offsetY + gridSize * cellSize},
+            1,
+            BLACK);
+        DrawLineEx({offsetX + gridSize * cellSize, offsetY}, {offsetX, offsetY + gridSize * cellSize},
+            1,
+            BLACK);
+
         for (int i = 0; i <= gridSize; i++)
         {
             constexpr int blockSize = 3;
