@@ -372,9 +372,9 @@ public:
 
         // symmetrical_horizontal_deleter(level);
         // symmetrical_vertical_deleter(level);
-        // controlled_deleter(level);
+        controlled_deleter(level);
         // symmetrical_diagonal_deleter(level);
-        deleter(level);
+        // deleter(level);
 
         return sudoku;
     }
