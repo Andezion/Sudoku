@@ -18,27 +18,25 @@ int buttons_handler()
     constexpr Rectangle button_classic = { 800, 100, 150, 50 };
     const Vector2 mouse_classic = GetMousePosition();
     const bool hover_classic = CheckCollisionPointRec(mouse_classic, button_classic);
-
-    const Color color = hover_classic ? SKYBLUE : LIGHTGRAY;
-    DrawRectangleRec(button_classic, color);
+    const Color color_classic = hover_classic ? SKYBLUE : LIGHTGRAY;
+    DrawRectangleRec(button_classic, color_classic);
     DrawText("Classic", button_classic.x + 20, button_classic.y + 15, 20, DARKGRAY);
 
-    Rectangle btn1 = { 800, 200, 150, 50 };
-    Vector2 mouse1 = GetMousePosition();
-    bool hover1 = CheckCollisionPointRec(mouse1, btn1);
-
-    Color color1 = hover1 ? SKYBLUE : LIGHTGRAY;
-    DrawRectangleRec(btn1, color1);
-    DrawText("Diagonal", btn1.x + 20, btn1.y + 15, 20, DARKGRAY);
+    constexpr Rectangle button_diagonal = { 800, 200, 150, 50 };
+    const Vector2 mouse_diagonal = GetMousePosition();
+    const bool hover_diagonal = CheckCollisionPointRec(mouse_diagonal, button_diagonal);
+    const Color color_diagonal = hover_diagonal ? SKYBLUE : LIGHTGRAY;
+    DrawRectangleRec(button_diagonal, color_diagonal);
+    DrawText("Diagonal", button_diagonal.x + 20, button_diagonal.y + 15, 20, DARKGRAY);
 
     if (hover_classic && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
     {
-        // что-то делаем
+        return 1;
     }
 
-    if (hover1 && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+    if (hover_diagonal && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
     {
-        // do smth with second button
+        return 2;
     }
 
     return 0;
