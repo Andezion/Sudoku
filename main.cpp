@@ -78,8 +78,56 @@ int main()
         switch (buttons_handler())
         {
             case 1:
+                const sudoku_checker_classic checker;
+                const sudoku_checker_classic solver(checker);
+                sudoku_generator_classic generator(checker, solver);
+                sudoku_show_classic show;
+
+                std::array<std::array<int, 9>, 9> sudoku = generator.generate9(5);
+
+                for (int i = 0; i <= gridSize; i++)
+                {
+                    constexpr int blockSize = 3;
+                    const int thickness = i % blockSize != 0 ? 1 : 4;
+
+                    DrawLineEx(
+                        {static_cast<float>(offsetX), static_cast<float>(offsetY + i * cellSize)},
+                        {static_cast<float>(offsetX + gridPixelSize), static_cast<float>(offsetY + i * cellSize)},
+                        thickness,
+                        BLACK
+                    );
+
+                    DrawLineEx(
+                        {static_cast<float>(offsetX + i * cellSize), static_cast<float>(offsetY)},
+                        {static_cast<float>(offsetX + i * cellSize), static_cast<float>(offsetY + gridPixelSize)},
+                        thickness,
+                        BLACK
+                    );
+                }
+
+                for (int row = 0; row < 9; row++)
+                {
+                    for (int col = 0; col < 9; col++)
+                    {
+                        if (const int value = sudoku[row][col]; value != 0)
+                        {
+                            const int posX = offsetX + col * cellSize + cellSize / 2 - 10;
+                            const int posY = offsetY + row * cellSize + cellSize / 2 - 10;
+
+                            DrawText(TextFormat("%d", value), posX, posY, 30, BLACK);
+                        }
+                    }
+                }
+
                 break;
             case 2:
+                const sudoku_checker_diagonal checker;
+                const sudoku_solver_diagonal solver(checker);
+                sudoku_generator_diagonal generator(checker, solver);
+                sudoku_show_diagonal show;
+
+                std::array<std::array<int, 9>, 9> sudoku = generator.generate9(5);
+
                 DrawLineEx(
                     {offsetX, offsetY},
                     {offsetX + gridSize * cellSize, offsetY + gridSize * cellSize},
@@ -88,13 +136,6 @@ int main()
                 DrawLineEx({offsetX + gridSize * cellSize, offsetY}, {offsetX, offsetY + gridSize * cellSize},
                     1,
                     BLACK);
-
-                const sudoku_checker_diagonal checker;
-                const sudoku_solver_diagonal solver(checker);
-                sudoku_generator_diagonal generator(checker, solver);
-                sudoku_show_diagonal show;
-
-                std::array<std::array<int, 9>, 9> sudoku = generator.generate9(5);
 
                 for (int i = 0; i <= gridSize; i++)
                 {
