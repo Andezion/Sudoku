@@ -68,13 +68,6 @@ int main()
     InitWindow(screenWidth, screenHeight, "Sudoku Grid (raylib)");
     SetTargetFPS(60);
 
-    const sudoku_checker_diagonal checker;
-    const sudoku_solver_diagonal solver(checker);
-    sudoku_generator_diagonal generator(checker, solver);
-    sudoku_show_diagonal show;
-
-    std::array<std::array<int, 9>, 9> sudoku = generator.generate9(5);
-
     while (!WindowShouldClose())
     {
         BeginDrawing();
@@ -82,48 +75,68 @@ int main()
 
         DrawText("Sudoku grid", 20, 20, 20, DARKGRAY);
 
-        buttons_handler();
-
-        DrawLineEx({offsetX, offsetY},
-            {offsetX + gridSize * cellSize, offsetY + gridSize * cellSize},
-            1,
-            BLACK);
-        DrawLineEx({offsetX + gridSize * cellSize, offsetY}, {offsetX, offsetY + gridSize * cellSize},
-            1,
-            BLACK);
-
-        for (int i = 0; i <= gridSize; i++)
+        switch (buttons_handler())
         {
-            constexpr int blockSize = 3;
-            const int thickness = i % blockSize != 0 ? 1 : 4;
+            case 1:
+                break;
+            case 2:
+                DrawLineEx(
+                    {offsetX, offsetY},
+                    {offsetX + gridSize * cellSize, offsetY + gridSize * cellSize},
+                    1,
+                    BLACK);
+                DrawLineEx({offsetX + gridSize * cellSize, offsetY}, {offsetX, offsetY + gridSize * cellSize},
+                    1,
+                    BLACK);
 
-            DrawLineEx(
-                {static_cast<float>(offsetX), static_cast<float>(offsetY + i * cellSize)},
-                {static_cast<float>(offsetX + gridPixelSize), static_cast<float>(offsetY + i * cellSize)},
-                thickness,
-                BLACK
-            );
+                const sudoku_checker_diagonal checker;
+                const sudoku_solver_diagonal solver(checker);
+                sudoku_generator_diagonal generator(checker, solver);
+                sudoku_show_diagonal show;
 
-            DrawLineEx(
-                {static_cast<float>(offsetX + i * cellSize), static_cast<float>(offsetY)},
-                {static_cast<float>(offsetX + i * cellSize), static_cast<float>(offsetY + gridPixelSize)},
-                thickness,
-                BLACK
-            );
-        }
+                std::array<std::array<int, 9>, 9> sudoku = generator.generate9(5);
 
-        for (int row = 0; row < 9; row++)
-        {
-            for (int col = 0; col < 9; col++)
-            {
-                if (const int value = sudoku[row][col]; value != 0)
+                for (int i = 0; i <= gridSize; i++)
                 {
-                    const int posX = offsetX + col * cellSize + cellSize / 2 - 10;
-                    const int posY = offsetY + row * cellSize + cellSize / 2 - 10;
+                    constexpr int blockSize = 3;
+                    const int thickness = i % blockSize != 0 ? 1 : 4;
 
-                    DrawText(TextFormat("%d", value), posX, posY, 30, BLACK);
+                    DrawLineEx(
+                        {static_cast<float>(offsetX), static_cast<float>(offsetY + i * cellSize)},
+                        {static_cast<float>(offsetX + gridPixelSize), static_cast<float>(offsetY + i * cellSize)},
+                        thickness,
+                        BLACK
+                    );
+
+                    DrawLineEx(
+                        {static_cast<float>(offsetX + i * cellSize), static_cast<float>(offsetY)},
+                        {static_cast<float>(offsetX + i * cellSize), static_cast<float>(offsetY + gridPixelSize)},
+                        thickness,
+                        BLACK
+                    );
                 }
-            }
+
+                for (int row = 0; row < 9; row++)
+                {
+                    for (int col = 0; col < 9; col++)
+                    {
+                        if (const int value = sudoku[row][col]; value != 0)
+                        {
+                            const int posX = offsetX + col * cellSize + cellSize / 2 - 10;
+                            const int posY = offsetY + row * cellSize + cellSize / 2 - 10;
+
+                            DrawText(TextFormat("%d", value), posX, posY, 30, BLACK);
+                        }
+                    }
+                }
+
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            default:
+                break;
         }
 
         EndDrawing();
