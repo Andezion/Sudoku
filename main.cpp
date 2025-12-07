@@ -1,5 +1,4 @@
 #include "sudoku_generator.h"
-#include "sudoku_show.h"
 #include "sudoku_solver.h"
 #include "raylib.h"
 
@@ -96,6 +95,13 @@ int main()
                 const sudoku_checker_big checker;
                 const sudoku_solver_big solver(checker);
                 sudoku_generator_big generator(checker, solver);
+                sudoku9x9 = generator.generate9(5);
+            }
+            else
+            {
+                const sudoku_checker_samurai checker;
+                const sudoku_solver_samurai solver(checker);
+                sudoku_generator_samurai generator(checker, solver);
                 sudoku9x9 = generator.generate9(5);
             }
         }
