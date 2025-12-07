@@ -166,7 +166,7 @@ public:
 
         std::shuffle(cells.begin(), cells.end(), rng);
 
-        int to_remove = 5 * level;
+        int to_remove = 20 + 5 * level;
         for (auto [i, j] : cells)
         {
             if (to_remove <= 0)
@@ -372,7 +372,7 @@ public:
 
         // symmetrical_horizontal_deleter(level);
         // symmetrical_vertical_deleter(level);
-        controlled_deleter(level);
+         controlled_deleter(level);
         // symmetrical_diagonal_deleter(level);
         // deleter(level);
 
@@ -1318,10 +1318,10 @@ public:
             {
                 const bool ok =
                        (i >= 0  && i <= 8  && j >= 0  && j <= 8) ||
-                       (i >= 0  && i <= 8  && j >= 12 && j <= 20) ||
+                       (i >= 0  && i <= 8  && j >= 12 && j < 20) ||
                        (i >= 6  && i <= 14 && j >= 6  && j <= 14) ||
-                       (i >= 12 && i <= 20 && j >= 0  && j <= 8) ||
-                       (i >= 12 && i <= 20 && j >= 12 && j <= 20);
+                       (i >= 12 && i < 20 && j >= 0  && j <= 8) ||
+                       (i >= 12 && i < 20 && j >= 12 && j < 20);
 
                 if (ok)
                 {

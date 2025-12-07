@@ -73,9 +73,7 @@ int main()
 
     while (!WindowShouldClose())
     {
-        int buttonPressed = buttons_handler();
-
-        if (buttonPressed != 0)
+        if (const int buttonPressed = buttons_handler(); buttonPressed != 0)
         {
             currentGameType = buttonPressed;
 
@@ -84,7 +82,7 @@ int main()
                 const sudoku_checker_classic checker;
                 const sudoku_solver_classic solver(checker);
                 sudoku_generator_classic generator(checker, solver);
-                sudoku9x9 = generator.generate9(5);
+                sudoku9x9 = generator.generate9(8);
             }
             else if (currentGameType == 2)
             {
@@ -93,7 +91,13 @@ int main()
                 sudoku_generator_diagonal generator(checker, solver);
                 sudoku9x9 = generator.generate9(5);
             }
-
+            else if (currentGameType == 3)
+            {
+                const sudoku_checker_big checker;
+                const sudoku_solver_big solver(checker);
+                sudoku_generator_big generator(checker, solver);
+                sudoku9x9 = generator.generate9(5);
+            }
         }
 
         BeginDrawing();
