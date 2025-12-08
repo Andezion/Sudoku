@@ -13,8 +13,11 @@ constexpr int offsetX = (screenWidth - 200 - gridPixelSize) / 2;
 constexpr int offsetY = (screenHeight - gridPixelSize) / 2;
 
 constexpr int gridSize_big = 16;
-constexpr int cellSize_big = 34;
+constexpr int cellSize_big = 37;
 constexpr int gridPixelSize_big = gridSize_big * cellSize_big;
+
+constexpr int offsetX_big = (screenWidth - 200 - gridPixelSize_big) / 2;
+constexpr int offsetY_big = (screenHeight - gridPixelSize_big) / 2;
 
 int buttons_handler()
 {
@@ -209,15 +212,15 @@ int main()
                 const int thickness = i % blockSize != 0 ? 1 : 4;
 
                 DrawLineEx(
-                    {static_cast<float>(offsetX), static_cast<float>(offsetY + i * cellSize)},
-                    {static_cast<float>(offsetX + gridPixelSize), static_cast<float>(offsetY + i * cellSize)},
+                    {static_cast<float>(offsetX_big), static_cast<float>(offsetY_big + i * cellSize_big)},
+                    {static_cast<float>(offsetX_big + gridPixelSize_big), static_cast<float>(offsetY_big + i * cellSize_big)},
                     thickness,
                     BLACK
                 );
 
                 DrawLineEx(
-                    {static_cast<float>(offsetX + i * cellSize), static_cast<float>(offsetY)},
-                    {static_cast<float>(offsetX + i * cellSize), static_cast<float>(offsetY + gridPixelSize)},
+                    {static_cast<float>(offsetX_big + i * cellSize_big), static_cast<float>(offsetY_big)},
+                    {static_cast<float>(offsetX_big + i * cellSize_big), static_cast<float>(offsetY_big + gridPixelSize_big)},
                     thickness,
                     BLACK
                 );
@@ -229,8 +232,8 @@ int main()
                 {
                     if (const int value = sudoku16x16[row][col]; value != 0)
                     {
-                        const int posX = offsetX + col * cellSize + cellSize / 2 - 10;
-                        const int posY = offsetY + row * cellSize + cellSize / 2 - 10;
+                        const int posX = offsetX_big + col * cellSize_big + cellSize_big / 2 - 10;
+                        const int posY = offsetY_big + row * cellSize_big + cellSize_big / 2 - 10;
 
                         DrawText(TextFormat("%d", value), posX, posY, 20, BLACK);
                     }
