@@ -73,6 +73,7 @@ int main()
 
     int currentGameType = 0;
     std::array<std::array<int, 9>, 9> sudoku9x9{};
+    std::array<std::array<int, 16>, 16> sudoku16x16{};
 
     while (!WindowShouldClose())
     {
@@ -99,14 +100,14 @@ int main()
                 const sudoku_checker_big checker;
                 const sudoku_solver_big solver(checker);
                 sudoku_generator_big generator(checker, solver);
-                sudoku9x9 = generator.generate9(5);
+                sudoku16x16 = generator.generate16(5);
             }
             else
             {
                 const sudoku_checker_samurai checker;
                 const sudoku_solver_samurai solver(checker);
                 sudoku_generator_samurai generator(checker, solver);
-                sudoku9x9 = generator.generate9(5);
+                sudoku16x16 = generator.generate16(5);
             }
         }
 
@@ -202,7 +203,39 @@ int main()
         }
         else if (currentGameType == 3)
         {
+            for (int i = 0; i <= gridSize_big; i++)
+            {
+                constexpr int blockSize = 4;
+                const int thickness = i % blockSize != 0 ? 1 : 4;
 
+                DrawLineEx(
+                    {static_cast<float>(offsetX), static_cast<float>(offsetY + i * cellSize)},
+                    {static_cast<float>(offsetX + gridPixelSize), static_cast<float>(offsetY + i * cellSize)},
+                    thickness,
+                    BLACK
+                );
+
+                DrawLineEx(
+                    {static_cast<float>(offsetX + i * cellSize), static_cast<float>(offsetY)},
+                    {static_cast<float>(offsetX + i * cellSize), static_cast<float>(offsetY + gridPixelSize)},
+                    thickness,
+                    BLACK
+                );
+            }
+
+            for (int row = 0; row < 16; row++)
+            {
+                for (int col = 0; col < 16; col++)
+                {
+                    if (const int value = sudoku16x16[row][col]; value != 0)
+                    {
+                        const int posX = offsetX + col * cellSize + cellSize / 2 - 10;
+                        const int posY = offsetY + row * cellSize + cellSize / 2 - 10;
+
+                        DrawText(TextFormat("%d", value), posX, posY, 20, BLACK);
+                    }
+                }
+            }
         }
 
         EndDrawing();
