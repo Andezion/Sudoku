@@ -5,12 +5,16 @@
 constexpr int screenWidth = 1000;
 constexpr int screenHeight = 800;
 
-constexpr int gridSize = 9;
+constexpr int gridSize_default = 9;
 constexpr int cellSize = 60;
-constexpr int gridPixelSize = gridSize * cellSize;
+constexpr int gridPixelSize = gridSize_default * cellSize;
 
 constexpr int offsetX = (screenWidth - 200 - gridPixelSize) / 2;
 constexpr int offsetY = (screenHeight - gridPixelSize) / 2;
+
+constexpr int gridSize_big = 16;
+constexpr int cellSize_big = 34;
+constexpr int gridPixelSize_big = gridSize_big * cellSize_big;
 
 int buttons_handler()
 {
@@ -113,7 +117,7 @@ int main()
 
         if (currentGameType == 1)
         {
-            for (int i = 0; i <= gridSize; i++)
+            for (int i = 0; i <= gridSize_default; i++)
             {
                 constexpr int blockSize = 3;
                 const int thickness = i % blockSize != 0 ? 1 : 4;
@@ -151,18 +155,18 @@ int main()
         {
             DrawLineEx(
                 {static_cast<float>(offsetX), static_cast<float>(offsetY)},
-                {static_cast<float>(offsetX + gridSize * cellSize), static_cast<float>(offsetY + gridSize * cellSize)},
+                {static_cast<float>(offsetX + gridSize_default * cellSize), static_cast<float>(offsetY + gridSize_default * cellSize)},
                 1,
                 BLACK
             );
             DrawLineEx(
-                {static_cast<float>(offsetX + gridSize * cellSize), static_cast<float>(offsetY)},
-                {static_cast<float>(offsetX), static_cast<float>(offsetY + gridSize * cellSize)},
+                {static_cast<float>(offsetX + gridSize_default * cellSize), static_cast<float>(offsetY)},
+                {static_cast<float>(offsetX), static_cast<float>(offsetY + gridSize_default * cellSize)},
                 1,
                 BLACK
             );
 
-            for (int i = 0; i <= gridSize; i++)
+            for (int i = 0; i <= gridSize_default; i++)
             {
                 constexpr int blockSize = 3;
                 const int thickness = i % blockSize != 0 ? 1 : 4;
@@ -195,6 +199,10 @@ int main()
                     }
                 }
             }
+        }
+        else if (currentGameType == 3)
+        {
+
         }
 
         EndDrawing();
