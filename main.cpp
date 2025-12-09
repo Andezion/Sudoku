@@ -121,6 +121,20 @@ int main()
 
         if (currentGameType == 1)
         {
+            const auto [x, y] = GetMousePosition();
+            int hoverRow{};
+            int hoverCol{};
+            if (x >= offsetX && x < offsetX + gridPixelSize &&
+                y >= offsetY && y < offsetY + gridPixelSize)
+            {
+                hoverCol = static_cast<int>((x - offsetX) / cellSize);
+                hoverRow = static_cast<int>((y - offsetY) / cellSize);
+                Rectangle hoverRec = { static_cast<float>(offsetX + hoverCol * cellSize),
+                                       static_cast<float>(offsetY + hoverRow * cellSize),
+                                       static_cast<float>(cellSize),
+                                       static_cast<float>(cellSize) };
+                DrawRectangleRec(hoverRec, Fade(SKYBLUE, 0.25f));
+            }
             for (int i = 0; i <= gridSize_default; i++)
             {
                 constexpr int blockSize = 3;
