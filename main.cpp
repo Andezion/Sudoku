@@ -129,7 +129,7 @@ int main()
             {
                 hoverCol = static_cast<int>((x - offsetX) / cellSize);
                 hoverRow = static_cast<int>((y - offsetY) / cellSize);
-                Rectangle hoverRec = { static_cast<float>(offsetX + hoverCol * cellSize),
+                const Rectangle hoverRec = { static_cast<float>(offsetX + hoverCol * cellSize),
                                        static_cast<float>(offsetY + hoverRow * cellSize),
                                        static_cast<float>(cellSize),
                                        static_cast<float>(cellSize) };
@@ -171,6 +171,20 @@ int main()
         }
         else if (currentGameType == 2)
         {
+            const auto [x, y] = GetMousePosition();
+            int hoverRow{};
+            int hoverCol{};
+            if (x >= offsetX && x < offsetX + gridPixelSize &&
+                y >= offsetY && y < offsetY + gridPixelSize)
+            {
+                hoverCol = static_cast<int>((x - offsetX) / cellSize);
+                hoverRow = static_cast<int>((y - offsetY) / cellSize);
+                const Rectangle hoverRec = { static_cast<float>(offsetX + hoverCol * cellSize),
+                                       static_cast<float>(offsetY + hoverRow * cellSize),
+                                       static_cast<float>(cellSize),
+                                       static_cast<float>(cellSize) };
+                DrawRectangleRec(hoverRec, Fade(SKYBLUE, 0.25f));
+            }
             DrawLineEx(
                 {static_cast<float>(offsetX), static_cast<float>(offsetY)},
                 {static_cast<float>(offsetX + gridSize_default * cellSize), static_cast<float>(offsetY + gridSize_default * cellSize)},
@@ -220,6 +234,20 @@ int main()
         }
         else if (currentGameType == 3)
         {
+            const auto [x, y] = GetMousePosition();
+            int hoverRow{};
+            int hoverCol{};
+            if (x >= offsetX_big && x < offsetX_big + gridPixelSize &&
+                y >= offsetY_big && y < offsetY_big + gridPixelSize)
+            {
+                hoverCol = static_cast<int>((x - offsetX_big) / cellSize_big);
+                hoverRow = static_cast<int>((y - offsetY_big) / cellSize_big);
+                const Rectangle hoverRec = { static_cast<float>(offsetX_big + hoverCol * cellSize_big),
+                                       static_cast<float>(offsetY_big + hoverRow * cellSize_big),
+                                       static_cast<float>(cellSize_big),
+                                       static_cast<float>(cellSize_big) };
+                DrawRectangleRec(hoverRec, Fade(SKYBLUE, 0.25f));
+            }
             for (int i = 0; i <= gridSize_big; i++)
             {
                 constexpr int blockSize = 4;
