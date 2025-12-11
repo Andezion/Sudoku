@@ -248,6 +248,9 @@ int main()
                                        static_cast<float>(cellSize_big) };
                 DrawRectangleRec(hoverRec, Fade(SKYBLUE, 0.25f));
             }
+
+
+
             for (int i = 0; i <= gridSize_big; i++)
             {
                 constexpr int blockSize = 4;
