@@ -272,8 +272,8 @@ int main()
         else if (currentGameType == 3)
         {
             const auto [x, y] = GetMousePosition();
-            int hoverRow{};
-            int hoverCol{};
+            int hoverRow = -1;
+            int hoverCol = -1;
             if (x >= offsetX_big && x < offsetX_big + gridPixelSize &&
                 y >= offsetY_big && y < offsetY_big + gridPixelSize)
             {
@@ -284,6 +284,21 @@ int main()
                                        static_cast<float>(cellSize_big),
                                        static_cast<float>(cellSize_big) };
                 DrawRectangleRec(hoverRec, Fade(SKYBLUE, 0.25f));
+            }
+
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && hoverRow != -1 && hoverCol != -1)
+            {
+                selectedRow = hoverRow;
+                selectedCol = hoverCol;
+            }
+
+            if (selectedRow != -1 && selectedCol != -1)
+            {
+                const Rectangle selRec = { static_cast<float>(offsetX_big + selectedCol * cellSize_big),
+                                           static_cast<float>(offsetY_big + selectedRow * cellSize_big),
+                                           static_cast<float>(cellSize_big),
+                                           static_cast<float>(cellSize_big) };
+                DrawRectangleRec(selRec, Fade(GREEN, 0.25f));
             }
 
             for (int i = 0; i <= gridSize_big; i++)
