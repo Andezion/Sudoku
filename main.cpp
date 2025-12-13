@@ -139,7 +139,7 @@ int main()
                 DrawRectangleRec(hoverRec, Fade(SKYBLUE, 0.25f));
             }
 
-            std::cout << selectedRow << ", " << selectedCol << std::endl;
+            // std::cout << selectedRow << ", " << selectedCol << std::endl;
 
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && hoverRow != -1 && hoverCol != -1)
             {
@@ -153,10 +153,8 @@ int main()
                                            static_cast<float>(offsetY + selectedRow * cellSize),
                                            static_cast<float>(cellSize),
                                            static_cast<float>(cellSize) };
-                DrawRectangleRec(selRec, Fade(RED, 0.25f));
+                DrawRectangleRec(selRec, Fade(GREEN, 0.25f));
             }
-            // const Vector2 touched_square = GetMousePosition();
-            // const bool hover_samurai = CheckCollisionPointRec(touched_square, hoverRec);
 
             for (int i = 0; i <= gridSize_default; i++)
             {
@@ -195,8 +193,8 @@ int main()
         else if (currentGameType == 2)
         {
             const auto [x, y] = GetMousePosition();
-            int hoverRow{};
-            int hoverCol{};
+            int hoverRow = -1;
+            int hoverCol = -1;
             if (x >= offsetX && x < offsetX + gridPixelSize &&
                 y >= offsetY && y < offsetY + gridPixelSize)
             {
@@ -208,6 +206,22 @@ int main()
                                        static_cast<float>(cellSize) };
                 DrawRectangleRec(hoverRec, Fade(SKYBLUE, 0.25f));
             }
+
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && hoverRow != -1 && hoverCol != -1)
+            {
+                selectedRow = hoverRow;
+                selectedCol = hoverCol;
+            }
+
+            if (selectedRow != -1 && selectedCol != -1)
+            {
+                const Rectangle selRec = { static_cast<float>(offsetX + selectedCol * cellSize),
+                                           static_cast<float>(offsetY + selectedRow * cellSize),
+                                           static_cast<float>(cellSize),
+                                           static_cast<float>(cellSize) };
+                DrawRectangleRec(selRec, Fade(GREEN, 0.25f));
+            }
+
             DrawLineEx(
                 {static_cast<float>(offsetX), static_cast<float>(offsetY)},
                 {static_cast<float>(offsetX + gridSize_default * cellSize), static_cast<float>(offsetY + gridSize_default * cellSize)},
