@@ -1,6 +1,8 @@
 #include "sudoku_generator.h"
 #include "sudoku_solver.h"
+#include "sudoku_checker.h"
 #include "raylib.h"
+#include <memory>
 
 constexpr int screenWidth = 1000;
 constexpr int screenHeight = 800;
@@ -81,6 +83,8 @@ int main()
     int selectedRow = -1;
     int selectedCol = -1;
 
+    std::unique_ptr<sudoku_checker> checker_ptr;
+
     while (!WindowShouldClose())
     {
         if (const int buttonPressed = buttons_handler(); buttonPressed != 0)
@@ -89,30 +93,30 @@ int main()
 
             if (currentGameType == 1)
             {
-                const sudoku_checker_classic checker;
-                const sudoku_solver_classic solver(checker);
-                sudoku_generator_classic generator(checker, solver);
+                checker_ptr = std::make_unique<sudoku_checker_classic>();
+                const sudoku_solver_classic solver(*checker_ptr);
+                sudoku_generator_classic generator(*checker_ptr, solver);
                 sudoku9x9 = generator.generate9(8);
             }
             else if (currentGameType == 2)
             {
-                const sudoku_checker_diagonal checker;
-                const sudoku_solver_diagonal solver(checker);
-                sudoku_generator_diagonal generator(checker, solver);
+                checker_ptr = std::make_unique<sudoku_checker_diagonal>();
+                const sudoku_solver_diagonal solver(*checker_ptr);
+                sudoku_generator_diagonal generator(*checker_ptr, solver);
                 sudoku9x9 = generator.generate9(5);
             }
             else if (currentGameType == 3)
             {
-                const sudoku_checker_big checker;
-                const sudoku_solver_big solver(checker);
-                sudoku_generator_big generator(checker, solver);
+                checker_ptr = std::make_unique<sudoku_checker_big>();
+                const sudoku_solver_big solver(*checker_ptr);
+                sudoku_generator_big generator(*checker_ptr, solver);
                 sudoku16x16 = generator.generate16(5);
             }
             else
             {
-                const sudoku_checker_samurai checker;
-                const sudoku_solver_samurai solver(checker);
-                sudoku_generator_samurai generator(checker, solver);
+                checker_ptr = std::make_unique<sudoku_checker_samurai>();
+                const sudoku_solver_samurai solver(*checker_ptr);
+                sudoku_generator_samurai generator(*checker_ptr, solver);
                 sudoku16x16 = generator.generate16(5);
             }
         }
@@ -154,6 +158,33 @@ int main()
                                            static_cast<float>(cellSize),
                                            static_cast<float>(cellSize) };
                 DrawRectangleRec(selRec, Fade(GREEN, 0.25f));
+
+                auto try_place = [&](int value)
+                {
+                    auto boardCopy = sudoku9x9;
+                    boardCopy[selectedRow][selectedCol] = value;
+                    if (checker_ptr)
+                    {
+                        if (checker_ptr->is_valid_sudoku(boardCopy, selectedRow, selectedCol, value))
+                        {
+                            sudoku9x9[selectedRow][selectedCol] = value;
+                        }
+                    }
+                    else
+                    {
+                        sudoku9x9[selectedRow][selectedCol] = value;
+                    }
+                };
+
+                if (IsKeyPressed(KEY_ONE)) try_place(1);
+                if (IsKeyPressed(KEY_TWO)) try_place(2);
+                if (IsKeyPressed(KEY_THREE)) try_place(3);
+                if (IsKeyPressed(KEY_FOUR)) try_place(4);
+                if (IsKeyPressed(KEY_FIVE)) try_place(5);
+                if (IsKeyPressed(KEY_SIX)) try_place(6);
+                if (IsKeyPressed(KEY_SEVEN)) try_place(7);
+                if (IsKeyPressed(KEY_EIGHT)) try_place(8);
+                if (IsKeyPressed(KEY_NINE)) try_place(9);
             }
 
             for (int i = 0; i <= gridSize_default; i++)
