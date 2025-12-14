@@ -162,7 +162,8 @@ int main()
                 auto try_place = [&](int value)
                 {
                     auto boardCopy = sudoku9x9;
-                    boardCopy[selectedRow][selectedCol] = value;
+                    
+                    boardCopy[selectedRow][selectedCol] = 0;
                     if (checker_ptr)
                     {
                         if (checker_ptr->is_valid_sudoku(boardCopy, selectedRow, selectedCol, value))
