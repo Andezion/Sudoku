@@ -92,6 +92,9 @@ int main()
         int selCol = -1;
         int conflictRow = -1;
         int conflictCol = -1;
+        
+        int diagonalType = 0;
+        int conflictValue = 0;
     } highlight;
 
     while (!WindowShouldClose())
@@ -207,13 +210,13 @@ int main()
                                 const int br = selectedRow - selectedRow % 3;
                                 const int bc = selectedCol - selectedCol % 3;
                                 for (int i = 0; i < 3; ++i)
-                                for (int j = 0; j < 3; ++j)
-                                {
-                                    if (sudoku9x9[br + i][bc + j] == value)
+                                    for (int j = 0; j < 3; ++j)
                                     {
-                                        cr = br + i; cc = bc + j; break;
+                                        if (sudoku9x9[br + i][bc + j] == value)
+                                        {
+                                            cr = br + i; cc = bc + j; break;
+                                        }
                                     }
-                                }
                             }
 
                             highlight.active = true;
@@ -284,6 +287,7 @@ int main()
                 }
             }
 
+
             for (int i = 0; i <= gridSize_default; i++)
             {
                 constexpr int blockSize = 3;
@@ -318,6 +322,7 @@ int main()
                 }
             }
         }
+
         else if (currentGameType == 2)
         {
             const auto [x, y] = GetMousePosition();
@@ -396,12 +401,52 @@ int main()
                                     }
                             }
 
+                            if (cr == -1)
+                            {
+                                int diagType = 0;
+                                if (selectedRow == selectedCol)
+                                {
+                                    for (int i = 0; i < 9; ++i)
+                                    {
+                                        if (sudoku9x9[i][i] == value)
+                                        {
+                                            diagType = 1; break;
+                                        }
+                                    }
+                                }
+                                if (diagType == 0 && selectedRow + selectedCol == 8)
+                                {
+                                    for (int i = 0; i < 9; ++i)
+                                    {
+                                        if (sudoku9x9[i][8 - i] == value)
+                                        {
+                                            diagType = 2; break;
+                                        }
+                                    }
+                                }
+
+                                if (diagType != 0)
+                                {
+                                    highlight.active = true;
+                                    highlight.expiresAt = GetTime() + 2.0;
+                                    highlight.selRow = selectedRow;
+                                    highlight.selCol = selectedCol;
+                                    highlight.conflictRow = -1;
+                                    highlight.conflictCol = -1;
+                                    highlight.diagonalType = diagType;
+                                    highlight.conflictValue = value;
+                                    return;
+                                }
+                            }
+
                             highlight.active = true;
                             highlight.expiresAt = GetTime() + 2.0;
                             highlight.selRow = selectedRow;
                             highlight.selCol = selectedCol;
                             highlight.conflictRow = cr;
                             highlight.conflictCol = cc;
+                            highlight.diagonalType = 0;
+                            highlight.conflictValue = 0;
                         }
                     }
                     else
@@ -427,39 +472,72 @@ int main()
                 if (GetTime() > highlight.expiresAt)
                 {
                     highlight.active = false;
+                    highlight.diagonalType = 0;
+                    highlight.conflictValue = 0;
+                    highlight.conflictRow = -1;
+                    highlight.conflictCol = -1;
                 }
                 else
                 {
-                    for (int c = 0; c < 9; ++c)
+                    if (highlight.diagonalType != 0)
                     {
-                        const Rectangle r = {
-                            static_cast<float>(offsetX + c * cellSize),
-                            static_cast<float>(offsetY + highlight.selRow * cellSize),
-                            static_cast<float>(cellSize),
-                            static_cast<float>(cellSize)
-                        };
-                        DrawRectangleRec(r, Fade(ORANGE, 0.35f));
-                    }
-                    for (int r = 0; r < 9; ++r)
-                    {
-                        const Rectangle rrec = {
-                            static_cast<float>(offsetX + highlight.selCol * cellSize),
-                            static_cast<float>(offsetY + r * cellSize),
-                            static_cast<float>(cellSize),
-                            static_cast<float>(cellSize)
-                        };
-                        DrawRectangleRec(rrec, Fade(ORANGE, 0.35f));
-                    }
+                        for (int i = 0; i < 9; ++i)
+                        {
+                            int r = highlight.diagonalType == 1 ? i : i;
+                            int c = highlight.diagonalType == 1 ? i : 8 - i;
+                            const Rectangle drec = {
+                                static_cast<float>(offsetX + c * cellSize),
+                                static_cast<float>(offsetY + r * cellSize),
+                                static_cast<float>(cellSize),
+                                static_cast<float>(cellSize)
+                            };
+                            DrawRectangleRec(drec, Fade(ORANGE, 0.35f));
 
-                    if (highlight.conflictRow != -1 && highlight.conflictCol != -1)
+                            if (highlight.conflictValue != 0 && sudoku9x9[r][c] == highlight.conflictValue)
+                            {
+                                const Rectangle confH = {
+                                    static_cast<float>(offsetX + c * cellSize),
+                                    static_cast<float>(offsetY + r * cellSize),
+                                    static_cast<float>(cellSize),
+                                    static_cast<float>(cellSize)
+                                };
+                                DrawRectangleRec(confH, Fade(RED, 0.6f));
+                            }
+                        }
+                    }
+                    else
                     {
-                        const Rectangle confH = {
-                            static_cast<float>(offsetX + highlight.conflictCol * cellSize),
-                            static_cast<float>(offsetY + highlight.conflictRow * cellSize),
-                            static_cast<float>(cellSize),
-                            static_cast<float>(cellSize)
-                        };
-                        DrawRectangleRec(confH, Fade(RED, 0.6f));
+                        for (int c = 0; c < 9; ++c)
+                        {
+                            const Rectangle r = {
+                                static_cast<float>(offsetX + c * cellSize),
+                                static_cast<float>(offsetY + highlight.selRow * cellSize),
+                                static_cast<float>(cellSize),
+                                static_cast<float>(cellSize)
+                            };
+                            DrawRectangleRec(r, Fade(ORANGE, 0.35f));
+                        }
+                        for (int r = 0; r < 9; ++r)
+                        {
+                            const Rectangle rrec = {
+                                static_cast<float>(offsetX + highlight.selCol * cellSize),
+                                static_cast<float>(offsetY + r * cellSize),
+                                static_cast<float>(cellSize),
+                                static_cast<float>(cellSize)
+                            };
+                            DrawRectangleRec(rrec, Fade(ORANGE, 0.35f));
+                        }
+
+                        if (highlight.conflictRow != -1 && highlight.conflictCol != -1)
+                        {
+                            const Rectangle confH = {
+                                static_cast<float>(offsetX + highlight.conflictCol * cellSize),
+                                static_cast<float>(offsetY + highlight.conflictRow * cellSize),
+                                static_cast<float>(cellSize),
+                                static_cast<float>(cellSize)
+                            };
+                            DrawRectangleRec(confH, Fade(RED, 0.6f));
+                        }
                     }
                 }
             }
@@ -664,7 +742,6 @@ int main()
     //     std::cerr << "Unknown sudoku type\n";
     //     return 1;
     // }
-
 
     return 0;
 }
