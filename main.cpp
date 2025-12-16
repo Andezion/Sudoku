@@ -79,6 +79,8 @@ int main()
     int currentGameType = 0;
     std::array<std::array<int, 9>, 9> sudoku9x9{};
     std::array<std::array<int, 16>, 16> sudoku16x16{};
+    std::array<std::array<bool, 9>, 9> fixed9x9{};
+    std::array<std::array<bool, 16>, 16> fixed16x16{};
 
     int selectedRow = -1;
     int selectedCol = -1;
@@ -109,6 +111,9 @@ int main()
                 const sudoku_solver_classic solver(*checker_ptr);
                 sudoku_generator_classic generator(*checker_ptr, solver);
                 sudoku9x9 = generator.generate9(8);
+                for (int r = 0; r < 9; ++r)
+                    for (int c = 0; c < 9; ++c)
+                        fixed9x9[r][c] = sudoku9x9[r][c] != 0;
                 highlight.active = false;
             }
             else if (currentGameType == 2)
@@ -117,6 +122,9 @@ int main()
                 const sudoku_solver_diagonal solver(*checker_ptr);
                 sudoku_generator_diagonal generator(*checker_ptr, solver);
                 sudoku9x9 = generator.generate9(5);
+                for (int r = 0; r < 9; ++r)
+                    for (int c = 0; c < 9; ++c)
+                        fixed9x9[r][c] = sudoku9x9[r][c] != 0;
                 highlight.active = false;
             }
             else if (currentGameType == 3)
@@ -125,6 +133,9 @@ int main()
                 const sudoku_solver_big solver(*checker_ptr);
                 sudoku_generator_big generator(*checker_ptr, solver);
                 sudoku16x16 = generator.generate16(5);
+                for (int r = 0; r < 16; ++r)
+                    for (int c = 0; c < 16; ++c)
+                        fixed16x16[r][c] = sudoku16x16[r][c] != 0;
                 highlight.active = false;
             }
             else
@@ -133,6 +144,9 @@ int main()
                 const sudoku_solver_samurai solver(*checker_ptr);
                 sudoku_generator_samurai generator(*checker_ptr, solver);
                 sudoku16x16 = generator.generate16(5);
+                for (int r = 0; r < 16; ++r)
+                    for (int c = 0; c < 16; ++c)
+                        fixed16x16[r][c] = sudoku16x16[r][c] != 0;
                 highlight.active = false;
             }
         }
@@ -175,6 +189,16 @@ int main()
 
                 auto try_place = [&](const int value)
                 {
+                    if (fixed9x9[selectedRow][selectedCol])
+                    {
+                        highlight.active = true;
+                        highlight.expiresAt = GetTime() + 1.0;
+                        highlight.selRow = selectedRow;
+                        highlight.selCol = selectedCol;
+                        highlight.conflictRow = -1;
+                        highlight.conflictCol = -1;
+                        return;
+                    }
                     auto boardCopy = sudoku9x9;
                     
                     boardCopy[selectedRow][selectedCol] = 0;
@@ -357,6 +381,16 @@ int main()
 
                 auto try_place = [&](const int value)
                 {
+                    if (fixed9x9[selectedRow][selectedCol])
+                    {
+                        highlight.active = true;
+                        highlight.expiresAt = GetTime() + 1.0;
+                        highlight.selRow = selectedRow;
+                        highlight.selCol = selectedCol;
+                        highlight.conflictRow = -1;
+                        highlight.conflictCol = -1;
+                        return;
+                    }
                     auto boardCopy = sudoku9x9;
 
                     boardCopy[selectedRow][selectedCol] = 0;
