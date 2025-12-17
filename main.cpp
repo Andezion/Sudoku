@@ -678,31 +678,37 @@ int main()
                         else
                         {
                             int cr = -1, cc = -1;
-                            for (int c = 0; c < 9; ++c)
+                            for (int c = 0; c < 16; ++c)
                             {
-                                if (sudoku9x9[selectedRow][c] == value)
+                                if (sudoku16x16[selectedRow][c] == value)
                                 {
-                                    cr = selectedRow; cc = c; break;
+                                    cr = selectedRow;
+                                    cc = c;
+
+                                    break;
                                 }
                             }
                             if (cr == -1)
                             {
-                                for (int r = 0; r < 9; ++r)
+                                for (int r = 0; r < 16; ++r)
                                 {
-                                    if (sudoku9x9[r][selectedCol] == value)
+                                    if (sudoku16x16[r][selectedCol] == value)
                                     {
-                                        cr = r; cc = selectedCol; break;
+                                        cr = r;
+                                        cc = selectedCol;
+
+                                        break;
                                     }
                                 }
                             }
                             if (cr == -1)
                             {
-                                const int br = selectedRow - selectedRow % 3;
-                                const int bc = selectedCol - selectedCol % 3;
-                                for (int i = 0; i < 3; ++i)
-                                    for (int j = 0; j < 3; ++j)
+                                const int br = selectedRow - selectedRow % 4;
+                                const int bc = selectedCol - selectedCol % 4;
+                                for (int i = 0; i < 4; ++i)
+                                    for (int j = 0; j < 4; ++j)
                                     {
-                                        if (sudoku9x9[br + i][bc + j] == value)
+                                        if (sudoku16x16[br + i][bc + j] == value)
                                         {
                                             cr = br + i; cc = bc + j; break;
                                         }
@@ -736,11 +742,15 @@ int main()
                                 if (diagType != 0)
                                 {
                                     highlight.active = true;
+
                                     highlight.expiresAt = GetTime() + 2.0;
+
                                     highlight.selRow = selectedRow;
                                     highlight.selCol = selectedCol;
+
                                     highlight.conflictRow = -1;
                                     highlight.conflictCol = -1;
+
                                     highlight.diagonalType = diagType;
                                     highlight.conflictValue = value;
                                     return;
@@ -748,11 +758,15 @@ int main()
                             }
 
                             highlight.active = true;
+
                             highlight.expiresAt = GetTime() + 2.0;
+
                             highlight.selRow = selectedRow;
                             highlight.selCol = selectedCol;
+
                             highlight.conflictRow = cr;
                             highlight.conflictCol = cc;
+
                             highlight.diagonalType = 0;
                             highlight.conflictValue = 0;
                         }
