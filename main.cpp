@@ -3,6 +3,7 @@
 #include "sudoku_checker.h"
 #include "raylib.h"
 #include <memory>
+#include <string>
 
 constexpr int screenWidth = 1000;
 constexpr int screenHeight = 800;
@@ -98,6 +99,12 @@ int main()
         int diagonalType = 0;
         int conflictValue = 0;
     } highlight;
+
+    auto valueToStr = [](int v) -> std::string {
+        if (v >= 1 && v <= 9) return std::to_string(v);
+        if (v >= 10 && v <= 15) return std::string(1, 'A' + (v - 10));
+        return std::string();
+    };
 
     while (!WindowShouldClose())
     {
@@ -627,8 +634,8 @@ int main()
             const auto [x, y] = GetMousePosition();
             int hoverRow = -1;
             int hoverCol = -1;
-            if (x >= offsetX_big && x < offsetX_big + gridPixelSize &&
-                y >= offsetY_big && y < offsetY_big + gridPixelSize)
+            if (x >= offsetX_big && x < offsetX_big + gridPixelSize_big &&
+                y >= offsetY_big && y < offsetY_big + gridPixelSize_big)
             {
                 hoverCol = static_cast<int>((x - offsetX_big) / cellSize_big);
                 hoverRow = static_cast<int>((y - offsetY_big) / cellSize_big);
@@ -655,7 +662,7 @@ int main()
 
                 auto try_place = [&](const int value)
                 {
-                    if (fixed9x9[selectedRow][selectedCol])
+                    if (fixed16x16[selectedRow][selectedCol])
                     {
                         highlight.active = true;
                         highlight.expiresAt = GetTime() + 1.0;
@@ -665,14 +672,14 @@ int main()
                         highlight.conflictCol = -1;
                         return;
                     }
-                    auto boardCopy = sudoku9x9;
+                    auto boardCopy = sudoku16x16;
 
                     boardCopy[selectedRow][selectedCol] = 0;
                     if (checker_ptr)
                     {
                         if (checker_ptr->is_valid_sudoku(boardCopy, selectedRow, selectedCol, value))
                         {
-                            sudoku9x9[selectedRow][selectedCol] = value;
+                            sudoku16x16[selectedRow][selectedCol] = value;
                             highlight.active = false;
                         }
                         else
@@ -728,7 +735,7 @@ int main()
                                         }
                                     }
                                 }
-                                if (diagType == 0 && selectedRow + selectedCol == 8)
+                                if (diagType == 0 && selectedRow + selectedCol == 15)
                                 {
                                     for (int i = 0; i < 16; ++i)
                                     {
@@ -787,6 +794,12 @@ int main()
                 if (IsKeyPressed(KEY_SEVEN)) try_place(7);
                 if (IsKeyPressed(KEY_EIGHT)) try_place(8);
                 if (IsKeyPressed(KEY_NINE)) try_place(9);
+                if (IsKeyPressed(KEY_A)) try_place(10);
+                if (IsKeyPressed(KEY_B)) try_place(11);
+                if (IsKeyPressed(KEY_C)) try_place(12);
+                if (IsKeyPressed(KEY_D)) try_place(13);
+                if (IsKeyPressed(KEY_E)) try_place(14);
+                if (IsKeyPressed(KEY_F)) try_place(15);
             }
 
             if (highlight.active)
@@ -859,8 +872,9 @@ int main()
                     {
                         const int posX = offsetX_big + col * cellSize_big + cellSize_big / 2 - 10;
                         const int posY = offsetY_big + row * cellSize_big + cellSize_big / 2 - 10;
+                        const std::string s = valueToStr(value);
 
-                        DrawText(TextFormat("%d", value), posX, posY, 20, BLACK);
+                        DrawText(s.c_str(), posX, posY, 20, BLACK);
                     }
                 }
             }
