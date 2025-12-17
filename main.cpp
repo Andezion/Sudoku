@@ -714,9 +714,9 @@ int main()
                                 int diagType = 0;
                                 if (selectedRow == selectedCol)
                                 {
-                                    for (int i = 0; i < 9; ++i)
+                                    for (int i = 0; i < 16; ++i)
                                     {
-                                        if (sudoku9x9[i][i] == value)
+                                        if (sudoku16x16[i][i] == value)
                                         {
                                             diagType = 1; break;
                                         }
@@ -724,9 +724,9 @@ int main()
                                 }
                                 if (diagType == 0 && selectedRow + selectedCol == 8)
                                 {
-                                    for (int i = 0; i < 9; ++i)
+                                    for (int i = 0; i < 16; ++i)
                                     {
-                                        if (sudoku9x9[i][8 - i] == value)
+                                        if (sudoku16x16[i][15 - i] == value)
                                         {
                                             diagType = 2; break;
                                         }
@@ -759,7 +759,7 @@ int main()
                     }
                     else
                     {
-                        sudoku9x9[selectedRow][selectedCol] = value;
+                        sudoku16x16[selectedRow][selectedCol] = value;
                         highlight.active = false;
                     }
                 };
@@ -786,20 +786,20 @@ int main()
                     for (int c = 0; c < 16; ++c)
                     {
                         const Rectangle r = {
-                            static_cast<float>(offsetX_big + c * cellSize),
-                            static_cast<float>(offsetY + highlight.selRow * cellSize),
-                            static_cast<float>(cellSize),
-                            static_cast<float>(cellSize)
+                            static_cast<float>(offsetX_big + c * cellSize_big),
+                            static_cast<float>(offsetY_big + highlight.selRow * cellSize_big),
+                            static_cast<float>(cellSize_big),
+                            static_cast<float>(cellSize_big)
                         };
                         DrawRectangleRec(r, Fade(ORANGE, 0.35f));
                     }
                     for (int r = 0; r < 16; ++r)
                     {
                         const Rectangle rrec = {
-                            static_cast<float>(offsetX_big + highlight.selCol * cellSize),
-                            static_cast<float>(offsetY + r * cellSize),
-                            static_cast<float>(cellSize),
-                            static_cast<float>(cellSize)
+                            static_cast<float>(offsetX_big + highlight.selCol * cellSize_big),
+                            static_cast<float>(offsetY_big + r * cellSize_big),
+                            static_cast<float>(cellSize_big),
+                            static_cast<float>(cellSize_big)
                         };
                         DrawRectangleRec(rrec, Fade(ORANGE, 0.35f));
                     }
@@ -807,10 +807,10 @@ int main()
                     if (highlight.conflictRow != -1 && highlight.conflictCol != -1)
                     {
                         const Rectangle confH = {
-                            static_cast<float>(offsetX_big + highlight.conflictCol * cellSize),
-                            static_cast<float>(offsetY + highlight.conflictRow * cellSize),
-                            static_cast<float>(cellSize),
-                            static_cast<float>(cellSize)
+                            static_cast<float>(offsetX_big + highlight.conflictCol * cellSize_big),
+                            static_cast<float>(offsetY_big + highlight.conflictRow * cellSize_big),
+                            static_cast<float>(cellSize_big),
+                            static_cast<float>(cellSize_big)
                         };
                         DrawRectangleRec(confH, Fade(RED, 0.6f));
                     }
