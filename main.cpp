@@ -786,17 +786,17 @@ int main()
                     for (int c = 0; c < 16; ++c)
                     {
                         const Rectangle r = {
-                            static_cast<float>(offsetX + c * cellSize),
+                            static_cast<float>(offsetX_big + c * cellSize),
                             static_cast<float>(offsetY + highlight.selRow * cellSize),
                             static_cast<float>(cellSize),
                             static_cast<float>(cellSize)
                         };
                         DrawRectangleRec(r, Fade(ORANGE, 0.35f));
                     }
-                    for (int r = 0; r < 9; ++r)
+                    for (int r = 0; r < 16; ++r)
                     {
                         const Rectangle rrec = {
-                            static_cast<float>(offsetX + highlight.selCol * cellSize),
+                            static_cast<float>(offsetX_big + highlight.selCol * cellSize),
                             static_cast<float>(offsetY + r * cellSize),
                             static_cast<float>(cellSize),
                             static_cast<float>(cellSize)
@@ -807,7 +807,7 @@ int main()
                     if (highlight.conflictRow != -1 && highlight.conflictCol != -1)
                     {
                         const Rectangle confH = {
-                            static_cast<float>(offsetX + highlight.conflictCol * cellSize),
+                            static_cast<float>(offsetX_big + highlight.conflictCol * cellSize),
                             static_cast<float>(offsetY + highlight.conflictRow * cellSize),
                             static_cast<float>(cellSize),
                             static_cast<float>(cellSize)
