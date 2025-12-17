@@ -311,7 +311,6 @@ int main()
                 }
             }
 
-
             for (int i = 0; i <= gridSize_default; i++)
             {
                 constexpr int blockSize = 3;
@@ -653,6 +652,169 @@ int main()
                                            static_cast<float>(cellSize_big),
                                            static_cast<float>(cellSize_big) };
                 DrawRectangleRec(selRec, Fade(GREEN, 0.25f));
+
+                auto try_place = [&](const int value)
+                {
+                    if (fixed9x9[selectedRow][selectedCol])
+                    {
+                        highlight.active = true;
+                        highlight.expiresAt = GetTime() + 1.0;
+                        highlight.selRow = selectedRow;
+                        highlight.selCol = selectedCol;
+                        highlight.conflictRow = -1;
+                        highlight.conflictCol = -1;
+                        return;
+                    }
+                    auto boardCopy = sudoku9x9;
+
+                    boardCopy[selectedRow][selectedCol] = 0;
+                    if (checker_ptr)
+                    {
+                        if (checker_ptr->is_valid_sudoku(boardCopy, selectedRow, selectedCol, value))
+                        {
+                            sudoku9x9[selectedRow][selectedCol] = value;
+                            highlight.active = false;
+                        }
+                        else
+                        {
+                            int cr = -1, cc = -1;
+                            for (int c = 0; c < 9; ++c)
+                            {
+                                if (sudoku9x9[selectedRow][c] == value)
+                                {
+                                    cr = selectedRow; cc = c; break;
+                                }
+                            }
+                            if (cr == -1)
+                            {
+                                for (int r = 0; r < 9; ++r)
+                                {
+                                    if (sudoku9x9[r][selectedCol] == value)
+                                    {
+                                        cr = r; cc = selectedCol; break;
+                                    }
+                                }
+                            }
+                            if (cr == -1)
+                            {
+                                const int br = selectedRow - selectedRow % 3;
+                                const int bc = selectedCol - selectedCol % 3;
+                                for (int i = 0; i < 3; ++i)
+                                    for (int j = 0; j < 3; ++j)
+                                    {
+                                        if (sudoku9x9[br + i][bc + j] == value)
+                                        {
+                                            cr = br + i; cc = bc + j; break;
+                                        }
+                                    }
+                            }
+
+                            if (cr == -1)
+                            {
+                                int diagType = 0;
+                                if (selectedRow == selectedCol)
+                                {
+                                    for (int i = 0; i < 9; ++i)
+                                    {
+                                        if (sudoku9x9[i][i] == value)
+                                        {
+                                            diagType = 1; break;
+                                        }
+                                    }
+                                }
+                                if (diagType == 0 && selectedRow + selectedCol == 8)
+                                {
+                                    for (int i = 0; i < 9; ++i)
+                                    {
+                                        if (sudoku9x9[i][8 - i] == value)
+                                        {
+                                            diagType = 2; break;
+                                        }
+                                    }
+                                }
+
+                                if (diagType != 0)
+                                {
+                                    highlight.active = true;
+                                    highlight.expiresAt = GetTime() + 2.0;
+                                    highlight.selRow = selectedRow;
+                                    highlight.selCol = selectedCol;
+                                    highlight.conflictRow = -1;
+                                    highlight.conflictCol = -1;
+                                    highlight.diagonalType = diagType;
+                                    highlight.conflictValue = value;
+                                    return;
+                                }
+                            }
+
+                            highlight.active = true;
+                            highlight.expiresAt = GetTime() + 2.0;
+                            highlight.selRow = selectedRow;
+                            highlight.selCol = selectedCol;
+                            highlight.conflictRow = cr;
+                            highlight.conflictCol = cc;
+                            highlight.diagonalType = 0;
+                            highlight.conflictValue = 0;
+                        }
+                    }
+                    else
+                    {
+                        sudoku9x9[selectedRow][selectedCol] = value;
+                        highlight.active = false;
+                    }
+                };
+
+                if (IsKeyPressed(KEY_ONE)) try_place(1);
+                if (IsKeyPressed(KEY_TWO)) try_place(2);
+                if (IsKeyPressed(KEY_THREE)) try_place(3);
+                if (IsKeyPressed(KEY_FOUR)) try_place(4);
+                if (IsKeyPressed(KEY_FIVE)) try_place(5);
+                if (IsKeyPressed(KEY_SIX)) try_place(6);
+                if (IsKeyPressed(KEY_SEVEN)) try_place(7);
+                if (IsKeyPressed(KEY_EIGHT)) try_place(8);
+                if (IsKeyPressed(KEY_NINE)) try_place(9);
+            }
+
+            if (highlight.active)
+            {
+                if (GetTime() > highlight.expiresAt)
+                {
+                    highlight.active = false;
+                }
+                else
+                {
+                    for (int c = 0; c < 16; ++c)
+                    {
+                        const Rectangle r = {
+                            static_cast<float>(offsetX + c * cellSize),
+                            static_cast<float>(offsetY + highlight.selRow * cellSize),
+                            static_cast<float>(cellSize),
+                            static_cast<float>(cellSize)
+                        };
+                        DrawRectangleRec(r, Fade(ORANGE, 0.35f));
+                    }
+                    for (int r = 0; r < 9; ++r)
+                    {
+                        const Rectangle rrec = {
+                            static_cast<float>(offsetX + highlight.selCol * cellSize),
+                            static_cast<float>(offsetY + r * cellSize),
+                            static_cast<float>(cellSize),
+                            static_cast<float>(cellSize)
+                        };
+                        DrawRectangleRec(rrec, Fade(ORANGE, 0.35f));
+                    }
+
+                    if (highlight.conflictRow != -1 && highlight.conflictCol != -1)
+                    {
+                        const Rectangle confH = {
+                            static_cast<float>(offsetX + highlight.conflictCol * cellSize),
+                            static_cast<float>(offsetY + highlight.conflictRow * cellSize),
+                            static_cast<float>(cellSize),
+                            static_cast<float>(cellSize)
+                        };
+                        DrawRectangleRec(confH, Fade(RED, 0.6f));
+                    }
+                }
             }
 
             for (int i = 0; i <= gridSize_big; i++)
