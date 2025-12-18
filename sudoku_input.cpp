@@ -21,10 +21,14 @@ void handle9x9(std::array<std::array<int,9>,9>& board,
     {
         hoverCol = static_cast<int>((x - offsetX) / cellSize);
         hoverRow = static_cast<int>((y - offsetY) / cellSize);
-        const Rectangle hoverRec = { static_cast<float>(offsetX + hoverCol * cellSize),
-                               static_cast<float>(offsetY + hoverRow * cellSize),
-                               static_cast<float>(cellSize),
-                               static_cast<float>(cellSize) };
+
+        const Rectangle hoverRec = {
+            static_cast<float>(offsetX + hoverCol * cellSize),
+            static_cast<float>(offsetY + hoverRow * cellSize),
+            static_cast<float>(cellSize),
+            static_cast<float>(cellSize)
+        };
+
         DrawRectangleRec(hoverRec, Fade(SKYBLUE, 0.25f));
     }
 
@@ -36,10 +40,12 @@ void handle9x9(std::array<std::array<int,9>,9>& board,
 
     if (selectedRow != -1 && selectedCol != -1)
     {
-        const Rectangle selRec = { static_cast<float>(offsetX + selectedCol * cellSize),
-                                   static_cast<float>(offsetY + selectedRow * cellSize),
-                                   static_cast<float>(cellSize),
-                                   static_cast<float>(cellSize) };
+        const Rectangle selRec = {
+            static_cast<float>(offsetX + selectedCol * cellSize),
+            static_cast<float>(offsetY + selectedRow * cellSize),
+            static_cast<float>(cellSize),
+            static_cast<float>(cellSize)
+        };
         DrawRectangleRec(selRec, Fade(GREEN, 0.25f));
 
         auto try_place = [&](const int value)
@@ -71,7 +77,8 @@ void handle9x9(std::array<std::array<int,9>,9>& board,
                     {
                         if (board[selectedRow][c] == value)
                         {
-                            cr = selectedRow; cc = c; break;
+                            cr = selectedRow; cc = c;
+                            break;
                         }
                     }
                     if (cr == -1)
@@ -80,7 +87,8 @@ void handle9x9(std::array<std::array<int,9>,9>& board,
                         {
                             if (board[r][selectedCol] == value)
                             {
-                                cr = r; cc = selectedCol; break;
+                                cr = r; cc = selectedCol;
+                                break;
                             }
                         }
                     }
@@ -88,7 +96,9 @@ void handle9x9(std::array<std::array<int,9>,9>& board,
                     {
                         const int br = selectedRow - selectedRow % 3;
                         const int bc = selectedCol - selectedCol % 3;
+
                         for (int i = 0; i < 3; ++i)
+                        {
                             for (int j = 0; j < 3; ++j)
                             {
                                 if (board[br + i][bc + j] == value)
@@ -96,6 +106,7 @@ void handle9x9(std::array<std::array<int,9>,9>& board,
                                     cr = br + i; cc = bc + j; break;
                                 }
                             }
+                        }
                     }
 
                     if (cr == -1 && diagonalMode)
@@ -107,7 +118,8 @@ void handle9x9(std::array<std::array<int,9>,9>& board,
                             {
                                 if (board[i][i] == value)
                                 {
-                                    diagType = 1; break;
+                                    diagType = 1;
+                                    break;
                                 }
                             }
                         }
@@ -117,7 +129,8 @@ void handle9x9(std::array<std::array<int,9>,9>& board,
                             {
                                 if (board[i][8 - i] == value)
                                 {
-                                    diagType = 2; break;
+                                    diagType = 2;
+                                    break;
                                 }
                             }
                         }
@@ -293,10 +306,13 @@ void handle16x16(std::array<std::array<int,16>,16>& board,
     {
         hoverCol = static_cast<int>((x - offsetX_big) / cellSize_big);
         hoverRow = static_cast<int>((y - offsetY_big) / cellSize_big);
-        const Rectangle hoverRec = { static_cast<float>(offsetX_big + hoverCol * cellSize_big),
-                               static_cast<float>(offsetY_big + hoverRow * cellSize_big),
-                               static_cast<float>(cellSize_big),
-                               static_cast<float>(cellSize_big) };
+
+        const Rectangle hoverRec = {
+            static_cast<float>(offsetX_big + hoverCol * cellSize_big),
+            static_cast<float>(offsetY_big + hoverRow * cellSize_big),
+            static_cast<float>(cellSize_big),
+            static_cast<float>(cellSize_big)
+        };
         DrawRectangleRec(hoverRec, Fade(SKYBLUE, 0.25f));
     }
 
@@ -308,10 +324,12 @@ void handle16x16(std::array<std::array<int,16>,16>& board,
 
     if (selectedRow != -1 && selectedCol != -1)
     {
-        const Rectangle selRec = { static_cast<float>(offsetX_big + selectedCol * cellSize_big),
-                                   static_cast<float>(offsetY_big + selectedRow * cellSize_big),
-                                   static_cast<float>(cellSize_big),
-                                   static_cast<float>(cellSize_big) };
+        const Rectangle selRec = {
+            static_cast<float>(offsetX_big + selectedCol * cellSize_big),
+            static_cast<float>(offsetY_big + selectedRow * cellSize_big),
+            static_cast<float>(cellSize_big),
+            static_cast<float>(cellSize_big)
+        };
         DrawRectangleRec(selRec, Fade(GREEN, 0.25f));
 
         auto try_place = [&](const int value)
@@ -367,6 +385,7 @@ void handle16x16(std::array<std::array<int,16>,16>& board,
                         const int br = selectedRow - selectedRow % 4;
                         const int bc = selectedCol - selectedCol % 4;
                         for (int i = 0; i < 4; ++i)
+                        {
                             for (int j = 0; j < 4; ++j)
                             {
                                 if (board[br + i][bc + j] == value)
@@ -374,6 +393,7 @@ void handle16x16(std::array<std::array<int,16>,16>& board,
                                     cr = br + i; cc = bc + j; break;
                                 }
                             }
+                        }
                     }
 
                     if (cr == -1)
@@ -385,7 +405,8 @@ void handle16x16(std::array<std::array<int,16>,16>& board,
                             {
                                 if (board[i][i] == value)
                                 {
-                                    diagType = 1; break;
+                                    diagType = 1;
+                                    break;
                                 }
                             }
                         }
@@ -395,7 +416,8 @@ void handle16x16(std::array<std::array<int,16>,16>& board,
                             {
                                 if (board[i][15 - i] == value)
                                 {
-                                    diagType = 2; break;
+                                    diagType = 2;
+                                    break;
                                 }
                             }
                         }
@@ -518,6 +540,7 @@ void handle16x16(std::array<std::array<int,16>,16>& board,
             {
                 const int posX = offsetX_big + col * cellSize_big + cellSize_big / 2 - 10;
                 const int posY = offsetY_big + row * cellSize_big + cellSize_big / 2 - 10;
+
                 const std::string s = valueToStr(value);
 
                 DrawText(s.c_str(), posX, posY, 20, BLACK);
