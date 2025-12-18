@@ -4,17 +4,18 @@
 #include "sudoku_constants.h"
 #include <string>
 
-void handle9x9(std::array<std::array<int,9>,9>& sudoku9x9,
-               std::array<std::array<bool,9>,9>& fixed9x9,
-               std::unique_ptr<sudoku_checker>& checker_ptr,
+void handle9x9(std::array<std::array<int,9>,9>& board,
+               const std::array<std::array<bool,9>,9>& fixed9x9,
+               const std::unique_ptr<sudoku_checker>& checker_ptr,
                HighlightState& highlight,
                int& selectedRow,
                int& selectedCol,
-               bool diagonalMode)
+               const bool diagonalMode)
 {
     const auto [x, y] = GetMousePosition();
     int hoverRow = -1;
     int hoverCol = -1;
+
     if (x >= offsetX && x < offsetX + gridPixelSize &&
         y >= offsetY && y < offsetY + gridPixelSize)
     {
@@ -53,14 +54,14 @@ void handle9x9(std::array<std::array<int,9>,9>& sudoku9x9,
                 highlight.conflictCol = -1;
                 return;
             }
-            auto boardCopy = sudoku9x9;
+            auto boardCopy = board;
 
             boardCopy[selectedRow][selectedCol] = 0;
             if (checker_ptr)
             {
                 if (checker_ptr->is_valid_sudoku(boardCopy, selectedRow, selectedCol, value))
                 {
-                    sudoku9x9[selectedRow][selectedCol] = value;
+                    board[selectedRow][selectedCol] = value;
                     highlight.active = false;
                 }
                 else
@@ -68,7 +69,7 @@ void handle9x9(std::array<std::array<int,9>,9>& sudoku9x9,
                     int cr = -1, cc = -1;
                     for (int c = 0; c < 9; ++c)
                     {
-                        if (sudoku9x9[selectedRow][c] == value)
+                        if (board[selectedRow][c] == value)
                         {
                             cr = selectedRow; cc = c; break;
                         }
@@ -77,7 +78,7 @@ void handle9x9(std::array<std::array<int,9>,9>& sudoku9x9,
                     {
                         for (int r = 0; r < 9; ++r)
                         {
-                            if (sudoku9x9[r][selectedCol] == value)
+                            if (board[r][selectedCol] == value)
                             {
                                 cr = r; cc = selectedCol; break;
                             }
@@ -90,7 +91,7 @@ void handle9x9(std::array<std::array<int,9>,9>& sudoku9x9,
                         for (int i = 0; i < 3; ++i)
                             for (int j = 0; j < 3; ++j)
                             {
-                                if (sudoku9x9[br + i][bc + j] == value)
+                                if (board[br + i][bc + j] == value)
                                 {
                                     cr = br + i; cc = bc + j; break;
                                 }
@@ -104,7 +105,7 @@ void handle9x9(std::array<std::array<int,9>,9>& sudoku9x9,
                         {
                             for (int i = 0; i < 9; ++i)
                             {
-                                if (sudoku9x9[i][i] == value)
+                                if (board[i][i] == value)
                                 {
                                     diagType = 1; break;
                                 }
@@ -114,7 +115,7 @@ void handle9x9(std::array<std::array<int,9>,9>& sudoku9x9,
                         {
                             for (int i = 0; i < 9; ++i)
                             {
-                                if (sudoku9x9[i][8 - i] == value)
+                                if (board[i][8 - i] == value)
                                 {
                                     diagType = 2; break;
                                 }
@@ -147,7 +148,7 @@ void handle9x9(std::array<std::array<int,9>,9>& sudoku9x9,
             }
             else
             {
-                sudoku9x9[selectedRow][selectedCol] = value;
+                board[selectedRow][selectedCol] = value;
                 highlight.active = false;
             }
         };
@@ -180,8 +181,9 @@ void handle9x9(std::array<std::array<int,9>,9>& sudoku9x9,
             {
                 for (int i = 0; i < 9; ++i)
                 {
-                    int r = highlight.diagonalType == 1 ? i : i;
-                    int c = highlight.diagonalType == 1 ? i : 8 - i;
+                    const int r = highlight.diagonalType == 1 ? i : i;
+                    const int c = highlight.diagonalType == 1 ? i : 8 - i;
+
                     const Rectangle drec = {
                         static_cast<float>(offsetX + c * cellSize),
                         static_cast<float>(offsetY + r * cellSize),
@@ -190,7 +192,7 @@ void handle9x9(std::array<std::array<int,9>,9>& sudoku9x9,
                     };
                     DrawRectangleRec(drec, Fade(ORANGE, 0.35f));
 
-                    if (highlight.conflictValue != 0 && sudoku9x9[r][c] == highlight.conflictValue)
+                    if (highlight.conflictValue != 0 && board[r][c] == highlight.conflictValue)
                     {
                         const Rectangle confH = {
                             static_cast<float>(offsetX + c * cellSize),
@@ -263,7 +265,7 @@ void handle9x9(std::array<std::array<int,9>,9>& sudoku9x9,
     {
         for (int col = 0; col < 9; col++)
         {
-            if (const int value = sudoku9x9[row][col]; value != 0)
+            if (const int value = board[row][col]; value != 0)
             {
                 const int posX = offsetX + col * cellSize + cellSize / 2 - 10;
                 const int posY = offsetY + row * cellSize + cellSize / 2 - 10;
@@ -274,16 +276,18 @@ void handle9x9(std::array<std::array<int,9>,9>& sudoku9x9,
     }
 }
 
-void handle16x16(std::array<std::array<int,16>,16>& sudoku16x16,
-                 std::array<std::array<bool,16>,16>& fixed16x16,
-                 std::unique_ptr<sudoku_checker>& checker_ptr,
+void handle16x16(std::array<std::array<int,16>,16>& board,
+                 const std::array<std::array<bool,16>,16>& fixed,
+                 const std::unique_ptr<sudoku_checker>& checker_ptr,
                  HighlightState& highlight,
                  int& selectedRow,
                  int& selectedCol)
 {
     const auto [x, y] = GetMousePosition();
+
     int hoverRow = -1;
     int hoverCol = -1;
+
     if (x >= offsetX_big && x < offsetX_big + gridPixelSize_big &&
         y >= offsetY_big && y < offsetY_big + gridPixelSize_big)
     {
@@ -312,7 +316,7 @@ void handle16x16(std::array<std::array<int,16>,16>& sudoku16x16,
 
         auto try_place = [&](const int value)
         {
-            if (fixed16x16[selectedRow][selectedCol])
+            if (fixed[selectedRow][selectedCol])
             {
                 highlight.active = true;
                 highlight.expiresAt = GetTime() + 1.0;
@@ -322,14 +326,14 @@ void handle16x16(std::array<std::array<int,16>,16>& sudoku16x16,
                 highlight.conflictCol = -1;
                 return;
             }
-            auto boardCopy = sudoku16x16;
+            auto boardCopy = board;
 
             boardCopy[selectedRow][selectedCol] = 0;
             if (checker_ptr)
             {
                 if (checker_ptr->is_valid_sudoku(boardCopy, selectedRow, selectedCol, value))
                 {
-                    sudoku16x16[selectedRow][selectedCol] = value;
+                    board[selectedRow][selectedCol] = value;
                     highlight.active = false;
                 }
                 else
@@ -337,7 +341,7 @@ void handle16x16(std::array<std::array<int,16>,16>& sudoku16x16,
                     int cr = -1, cc = -1;
                     for (int c = 0; c < 16; ++c)
                     {
-                        if (sudoku16x16[selectedRow][c] == value)
+                        if (board[selectedRow][c] == value)
                         {
                             cr = selectedRow;
                             cc = c;
@@ -349,7 +353,7 @@ void handle16x16(std::array<std::array<int,16>,16>& sudoku16x16,
                     {
                         for (int r = 0; r < 16; ++r)
                         {
-                            if (sudoku16x16[r][selectedCol] == value)
+                            if (board[r][selectedCol] == value)
                             {
                                 cr = r;
                                 cc = selectedCol;
@@ -365,7 +369,7 @@ void handle16x16(std::array<std::array<int,16>,16>& sudoku16x16,
                         for (int i = 0; i < 4; ++i)
                             for (int j = 0; j < 4; ++j)
                             {
-                                if (sudoku16x16[br + i][bc + j] == value)
+                                if (board[br + i][bc + j] == value)
                                 {
                                     cr = br + i; cc = bc + j; break;
                                 }
@@ -379,7 +383,7 @@ void handle16x16(std::array<std::array<int,16>,16>& sudoku16x16,
                         {
                             for (int i = 0; i < 16; ++i)
                             {
-                                if (sudoku16x16[i][i] == value)
+                                if (board[i][i] == value)
                                 {
                                     diagType = 1; break;
                                 }
@@ -389,7 +393,7 @@ void handle16x16(std::array<std::array<int,16>,16>& sudoku16x16,
                         {
                             for (int i = 0; i < 16; ++i)
                             {
-                                if (sudoku16x16[i][15 - i] == value)
+                                if (board[i][15 - i] == value)
                                 {
                                     diagType = 2; break;
                                 }
@@ -422,7 +426,7 @@ void handle16x16(std::array<std::array<int,16>,16>& sudoku16x16,
             }
             else
             {
-                sudoku16x16[selectedRow][selectedCol] = value;
+                board[selectedRow][selectedCol] = value;
                 highlight.active = false;
             }
         };
@@ -510,7 +514,7 @@ void handle16x16(std::array<std::array<int,16>,16>& sudoku16x16,
     {
         for (int col = 0; col < 16; col++)
         {
-            if (const int value = sudoku16x16[row][col]; value != 0)
+            if (const int value = board[row][col]; value != 0)
             {
                 const int posX = offsetX_big + col * cellSize_big + cellSize_big / 2 - 10;
                 const int posY = offsetY_big + row * cellSize_big + cellSize_big / 2 - 10;
