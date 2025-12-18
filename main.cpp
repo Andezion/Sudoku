@@ -175,22 +175,6 @@ int main()
         }
         else if (currentGameType == 3)
         {
-            const auto [x, y] = GetMousePosition();
-            int hoverRow = -1;
-            int hoverCol = -1;
-            if (x >= offsetX_big && x < offsetX_big + gridPixelSize_big &&
-                y >= offsetY_big && y < offsetY_big + gridPixelSize_big)
-            {
-                hoverCol = static_cast<int>((x - offsetX_big) / cellSize_big);
-                hoverRow = static_cast<int>((y - offsetY_big) / cellSize_big);
-
-                const Rectangle hoverRec = { static_cast<float>(offsetX_big + hoverCol * cellSize_big),
-                                       static_cast<float>(offsetY_big + hoverRow * cellSize_big),
-                                       static_cast<float>(cellSize_big),
-                                       static_cast<float>(cellSize_big) };
-                DrawRectangleRec(hoverRec, Fade(SKYBLUE, 0.25f));
-            }
-
             handle16x16(sudoku16x16, fixed16x16, checker_ptr, highlight, selectedRow, selectedCol);
         }
 
