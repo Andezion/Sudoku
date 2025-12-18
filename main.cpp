@@ -89,44 +89,72 @@ int main()
             {
                 checker_ptr = std::make_unique<sudoku_checker_classic>();
                 const sudoku_solver_classic solver(*checker_ptr);
+
                 sudoku_generator_classic generator(*checker_ptr, solver);
                 sudoku9x9 = generator.generate9(8);
+
                 for (int r = 0; r < 9; ++r)
+                {
                     for (int c = 0; c < 9; ++c)
+                    {
                         fixed9x9[r][c] = sudoku9x9[r][c] != 0;
+                    }
+                }
+
                 highlight.active = false;
             }
             else if (currentGameType == 2)
             {
                 checker_ptr = std::make_unique<sudoku_checker_diagonal>();
                 const sudoku_solver_diagonal solver(*checker_ptr);
+
                 sudoku_generator_diagonal generator(*checker_ptr, solver);
                 sudoku9x9 = generator.generate9(5);
+
                 for (int r = 0; r < 9; ++r)
+                {
                     for (int c = 0; c < 9; ++c)
+                    {
                         fixed9x9[r][c] = sudoku9x9[r][c] != 0;
+                    }
+                }
+
                 highlight.active = false;
             }
             else if (currentGameType == 3)
             {
                 checker_ptr = std::make_unique<sudoku_checker_big>();
                 const sudoku_solver_big solver(*checker_ptr);
+
                 sudoku_generator_big generator(*checker_ptr, solver);
                 sudoku16x16 = generator.generate16(5);
+
                 for (int r = 0; r < 16; ++r)
+                {
                     for (int c = 0; c < 16; ++c)
+                    {
                         fixed16x16[r][c] = sudoku16x16[r][c] != 0;
+                    }
+                }
+
                 highlight.active = false;
             }
             else
             {
                 checker_ptr = std::make_unique<sudoku_checker_samurai>();
                 const sudoku_solver_samurai solver(*checker_ptr);
+
                 sudoku_generator_samurai generator(*checker_ptr, solver);
                 sudoku16x16 = generator.generate16(5);
+
                 for (int r = 0; r < 16; ++r)
+                {
                     for (int c = 0; c < 16; ++c)
+                    {
                         fixed16x16[r][c] = sudoku16x16[r][c] != 0;
+                    }
+                }
+
                 highlight.active = false;
             }
         }
@@ -155,6 +183,7 @@ int main()
             {
                 hoverCol = static_cast<int>((x - offsetX_big) / cellSize_big);
                 hoverRow = static_cast<int>((y - offsetY_big) / cellSize_big);
+
                 const Rectangle hoverRec = { static_cast<float>(offsetX_big + hoverCol * cellSize_big),
                                        static_cast<float>(offsetY_big + hoverRow * cellSize_big),
                                        static_cast<float>(cellSize_big),
