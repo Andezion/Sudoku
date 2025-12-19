@@ -10,7 +10,8 @@ void handle9x9(std::array<std::array<int,9>,9>& board,
                HighlightState& highlight,
                int& selectedRow,
                int& selectedCol,
-               const bool diagonalMode)
+               const bool diagonalMode,
+               int& currentGameType)
 {
     const auto [x, y] = GetMousePosition();
     int hoverRow = -1;
@@ -287,6 +288,55 @@ void handle9x9(std::array<std::array<int,9>,9>& board,
             }
         }
     }
+
+    static bool celebrate = false;
+    static double celebrateEnd = 0.0;
+
+    auto is_solved9 = [&]() -> bool {
+        if (!checker_ptr) return false;
+        for (int r = 0; r < 9; ++r)
+        {
+            for (int c = 0; c < 9; ++c)
+            {
+                const int v = board[r][c];
+                if (v == 0) return false;
+                auto copy = board;
+                copy[r][c] = 0;
+                if (!checker_ptr->is_valid_sudoku(copy, r, c, v)) return false;
+            }
+        }
+        return true;
+    };
+
+    if (!celebrate && is_solved9())
+    {
+        celebrate = true;
+        celebrateEnd = GetTime() + 1.0; 
+    }
+
+    if (celebrate)
+    {
+        const float alpha = (GetTime() < celebrateEnd) ? 0.95f : 0.95f;
+        DrawRectangle(0, 0, screenWidth, screenHeight, Fade(GOLD, alpha));
+
+        const Rectangle againBtn = { static_cast<float>(screenWidth/2 - 75), static_cast<float>(screenHeight/2 - 25), 150.0f, 50.0f };
+        const Vector2 mp = GetMousePosition();
+        const bool hover = CheckCollisionPointRec(mp, againBtn);
+        DrawRectangleRec(againBtn, hover ? SKYBLUE : LIGHTGRAY);
+        DrawText("Again?!", static_cast<int>(againBtn.x + 25), static_cast<int>(againBtn.y + 12), 30, DARKGRAY);
+
+        if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            celebrate = false;
+          
+            currentGameType = 0;
+        }
+
+        if (GetTime() > celebrateEnd)
+        {
+           
+        }
+    }
 }
 
 void handle16x16(std::array<std::array<int,16>,16>& board,
@@ -294,7 +344,8 @@ void handle16x16(std::array<std::array<int,16>,16>& board,
                  const std::unique_ptr<sudoku_checker>& checker_ptr,
                  HighlightState& highlight,
                  int& selectedRow,
-                 int& selectedCol)
+                 int& selectedCol,
+                 int& currentGameType)
 {
     const auto [x, y] = GetMousePosition();
 
@@ -545,6 +596,48 @@ void handle16x16(std::array<std::array<int,16>,16>& board,
 
                 DrawText(s.c_str(), posX, posY, 20, BLACK);
             }
+        }
+    }
+
+    static bool celebrate16 = false;
+    static double celebrate16End = 0.0;
+
+    auto is_solved16 = [&]() -> bool {
+        if (!checker_ptr) return false;
+        for (int r = 0; r < 16; ++r)
+        {
+            for (int c = 0; c < 16; ++c)
+            {
+                const int v = board[r][c];
+                if (v == 0) return false;
+                auto copy = board;
+                copy[r][c] = 0;
+                if (!checker_ptr->is_valid_sudoku(copy, r, c, v)) return false;
+            }
+        }
+        return true;
+    };
+
+    if (!celebrate16 && is_solved16())
+    {
+        celebrate16 = true;
+        celebrate16End = GetTime() + 1.0;
+    }
+
+    if (celebrate16)
+    {
+        DrawRectangle(0, 0, screenWidth, screenHeight, Fade(GOLD, 0.95f));
+
+        const Rectangle againBtn = { static_cast<float>(screenWidth/2 - 75), static_cast<float>(screenHeight/2 - 25), 150.0f, 50.0f };
+        const Vector2 mp = GetMousePosition();
+        const bool hover = CheckCollisionPointRec(mp, againBtn);
+        DrawRectangleRec(againBtn, hover ? SKYBLUE : LIGHTGRAY);
+        DrawText("Again?!", static_cast<int>(againBtn.x + 25), static_cast<int>(againBtn.y + 12), 30, DARKGRAY);
+
+        if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            celebrate16 = false;
+            currentGameType = 0;
         }
     }
 }
