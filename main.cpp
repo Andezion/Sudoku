@@ -25,8 +25,6 @@ int main()
     std::unique_ptr<sudoku_checker> checker_ptr;
     HighlightState highlight;
 
-    
-
     while (!WindowShouldClose())
     {
         if (const int buttonPressed = buttons_handler(); buttonPressed != 0)
