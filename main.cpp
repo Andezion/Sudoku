@@ -112,16 +112,16 @@ int main()
 
         if (currentGameType == 1)
         {
-            handle9x9(sudoku9x9, fixed9x9, checker_ptr, highlight, selectedRow, selectedCol, false);
+            handle9x9(sudoku9x9, fixed9x9, checker_ptr, highlight, selectedRow, selectedCol, false, currentGameType);
         }
 
         else if (currentGameType == 2)
         {
-            handle9x9(sudoku9x9, fixed9x9, checker_ptr, highlight, selectedRow, selectedCol, true);
+            handle9x9(sudoku9x9, fixed9x9, checker_ptr, highlight, selectedRow, selectedCol, true, currentGameType);
         }
         else if (currentGameType == 3)
         {
-            handle16x16(sudoku16x16, fixed16x16, checker_ptr, highlight, selectedRow, selectedCol);
+            handle16x16(sudoku16x16, fixed16x16, checker_ptr, highlight, selectedRow, selectedCol, currentGameType);
         }
 
         EndDrawing();
