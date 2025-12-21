@@ -27,7 +27,6 @@ int main()
 
     while (!WindowShouldClose())
     {
-        statistic_handlers();
         if (const int buttonPressed = buttons_handler(); buttonPressed != 0)
         {
             gameTimer.start();
@@ -113,11 +112,12 @@ int main()
 
         DrawText("Sudoku grid", 20, 20, 20, DARKGRAY);
 
+        statistic_handlers();
+
         if (currentGameType == 1)
         {
             handle9x9(sudoku9x9, fixed9x9, checker_ptr, highlight, selectedRow, selectedCol, false, currentGameType);
         }
-
         else if (currentGameType == 2)
         {
             handle9x9(sudoku9x9, fixed9x9, checker_ptr, highlight, selectedRow, selectedCol, true, currentGameType);
