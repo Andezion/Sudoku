@@ -27,6 +27,7 @@ int main()
 
     while (!WindowShouldClose())
     {
+        statistic_handlers();
         if (const int buttonPressed = buttons_handler(); buttonPressed != 0)
         {
             currentGameType = buttonPressed;
