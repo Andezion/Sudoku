@@ -15,7 +15,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential cmake pkg-config git \
-            libopenal-dev libasound2-dev libxcursor-dev libxrandr-dev libx11-dev libgl1-mesa-dev
+            libopenal-dev libasound2-dev libxcursor-dev libxrandr-dev libx11-dev libgl1-mesa-dev libxinerama-dev
 
           # Build and install raylib from source (available and reliable across Ubuntu versions)
           git clone https://github.com/raysan5/raylib.git
