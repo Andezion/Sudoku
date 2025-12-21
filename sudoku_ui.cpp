@@ -1,5 +1,7 @@
 #include "sudoku_ui.h"
 
+GameTimer gameTimer;
+
 std::string valueToStr(const int v)
 {
     if (v >= 1 && v <= 9)
@@ -75,65 +77,11 @@ void statistic_handlers()
         gameTimer.getTimeFormatted(hours, minutes, seconds);
 
         const char* timeText = TextFormat("Time: %02d:%02d:%02d", hours, minutes, seconds);
-        std::cout << timeText << std::endl;
+        //std::cout << timeText << std::endl;
         DrawText(timeText, font.x + 10, font.y + 50, 20, DARKGRAY);
     }
     else
     {
         DrawText("Time: --:--:--", font.x + 10, font.y + 50, 20, GRAY);
     }
-}
-
-int check_button_press()
-{
-    constexpr Rectangle button_classic = { 800, 100, 150, 50 };
-    constexpr Rectangle button_diagonal = { 800, 200, 150, 50 };
-    constexpr Rectangle button_big = { 800, 300, 150, 50 };
-    constexpr Rectangle button_samurai = { 800, 400, 150, 50 };
-
-    const Vector2 mouse = GetMousePosition();
-
-    if (CheckCollisionPointRec(mouse, button_classic) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-    {
-        return 1;
-    }
-    if (CheckCollisionPointRec(mouse, button_diagonal) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-    {
-        return 2;
-    }
-    if (CheckCollisionPointRec(mouse, button_big) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-    {
-        return 3;
-    }
-    if (CheckCollisionPointRec(mouse, button_samurai) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-    {
-        return 4;
-    }
-
-    return 0;
-}
-
-void draw_buttons()
-{
-    const Vector2 mouse = GetMousePosition();
-
-    constexpr Rectangle button_classic = { 800, 100, 150, 50 };
-    const bool hover_classic = CheckCollisionPointRec(mouse, button_classic);
-    DrawRectangleRec(button_classic, hover_classic ? SKYBLUE : LIGHTGRAY);
-    DrawText("Classic", button_classic.x + 36, button_classic.y + 15, 20, DARKGRAY);
-
-    constexpr Rectangle button_diagonal = { 800, 200, 150, 50 };
-    const bool hover_diagonal = CheckCollisionPointRec(mouse, button_diagonal);
-    DrawRectangleRec(button_diagonal, hover_diagonal ? SKYBLUE : LIGHTGRAY);
-    DrawText("Diagonal", button_diagonal.x + 31, button_diagonal.y + 15, 20, DARKGRAY);
-
-    constexpr Rectangle button_big = { 800, 300, 150, 50 };
-    const bool hover_big = CheckCollisionPointRec(mouse, button_big);
-    DrawRectangleRec(button_big, hover_big ? SKYBLUE : LIGHTGRAY);
-    DrawText("Big", button_big.x + 57, button_big.y + 15, 20, DARKGRAY);
-
-    constexpr Rectangle button_samurai = { 800, 400, 150, 50 };
-    const bool hover_samurai = CheckCollisionPointRec(mouse, button_samurai);
-    DrawRectangleRec(button_samurai, hover_samurai ? SKYBLUE : LIGHTGRAY);
-    DrawText("Samurai", button_samurai.x + 34, button_samurai.y + 15, 20, DARKGRAY);
 }
