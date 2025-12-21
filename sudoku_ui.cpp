@@ -36,7 +36,7 @@ int buttons_handler()
     const bool hover_big = CheckCollisionPointRec(mouse_big, button_big);
     const Color color_big = hover_big ? SKYBLUE : LIGHTGRAY;
     DrawRectangleRec(button_big, color_big);
-    DrawText("Big", button_big.x + 20, button_big.y + 15, 20, DARKGRAY);
+    DrawText("Big", button_big.x + 57, button_big.y + 15, 20, DARKGRAY);
 
     constexpr Rectangle button_samurai = { 800, 400, 150, 50 };
     const Vector2 mouse_samurai = GetMousePosition();
