@@ -64,3 +64,11 @@ int buttons_handler()
 
     return 0;
 }
+
+void statistic_handlers()
+{
+    constexpr Rectangle font = { 800, 500, 150, 200 };
+    const Color color_classic = GREEN;
+    DrawRectangleRec(font, color_classic);
+    //DrawText("Classic", font.x + 20, font.y + 15, 20, DARKGRAY);
+}
