@@ -16,9 +16,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential cmake pkg-config \
             libopenal-dev libasound2-dev libxcursor-dev libxrandr-dev libx11-dev libgl1-mesa-dev
-          sudo add-apt-repository ppa:captnfabs/ppa
+          
           sudo apt-get update
-          sudo apt-get install -y libraylib-dev
+          sudo apt-get install -y raylib-dev
 
       - name: Compile
         run: g++ -std=c++17 -Wall -Wextra -O2 main.cpp -o main -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
