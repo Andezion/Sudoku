@@ -27,8 +27,12 @@ jobs:
           cd ../..
           rm -rf raylib
 
-      - name: Compile
-        run: g++ -std=c++17 -Wall -Wextra -O2 main.cpp -o main -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+      - name: Compile (all sources)
+        run: |
+          # Compile all project .cpp files and link against installed raylib
+          g++ -std=c++17 -Wall -Wextra -O2 \
+            main.cpp sudoku_input.cpp sudoku_ui.cpp \
+            -o main -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
       - name: Verify binary
         run: |
