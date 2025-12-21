@@ -3,3 +3,4 @@
 
 std::string valueToStr(int v);
 int buttons_handler();
+void statistic_handlers();
