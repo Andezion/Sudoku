@@ -63,11 +63,24 @@ int buttons_handler()
     return 0;
 }
 
+static GameTimer gameTimer;
+
 void statistic_handlers()
 {
     constexpr Rectangle font = { 800, 500, 150, 210 };
     DrawRectangleRec(font, LIGHTGRAY);
     DrawText("Statistics", font.x + 23, font.y + 15, 20, DARKGRAY);
 
+    if (gameTimer.isRunning)
+    {
+        int hours, minutes, seconds;
+        gameTimer.getTimeFormatted(hours, minutes, seconds);
 
+        const char* timeText = TextFormat("Time: %02d:%02d:%02d", hours, minutes, seconds);
+        DrawText(timeText, font.x + 10, font.y + 50, 20, DARKGRAY);
+    }
+    else
+    {
+        DrawText("Time: --:--:--", font.x + 10, font.y + 50, 20, GRAY);
+    }
 }
