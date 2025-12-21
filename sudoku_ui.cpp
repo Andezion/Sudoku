@@ -22,14 +22,14 @@ int buttons_handler()
     const bool hover_classic = CheckCollisionPointRec(mouse_classic, button_classic);
     const Color color_classic = hover_classic ? SKYBLUE : LIGHTGRAY;
     DrawRectangleRec(button_classic, color_classic);
-    DrawText("Classic", button_classic.x + 20, button_classic.y + 15, 20, DARKGRAY);
+    DrawText("Classic", button_classic.x + 23, button_classic.y + 15, 20, DARKGRAY);
 
     constexpr Rectangle button_diagonal = { 800, 200, 150, 50 };
     const Vector2 mouse_diagonal = GetMousePosition();
     const bool hover_diagonal = CheckCollisionPointRec(mouse_diagonal, button_diagonal);
     const Color color_diagonal = hover_diagonal ? SKYBLUE : LIGHTGRAY;
     DrawRectangleRec(button_diagonal, color_diagonal);
-    DrawText("Diagonal", button_diagonal.x + 20, button_diagonal.y + 15, 20, DARKGRAY);
+    DrawText("Diagonal", button_diagonal.x + 31, button_diagonal.y + 15, 20, DARKGRAY);
 
     constexpr Rectangle button_big = { 800, 300, 150, 50 };
     const Vector2 mouse_big = GetMousePosition();
