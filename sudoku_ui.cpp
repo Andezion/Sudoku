@@ -1,6 +1,4 @@
 #include "sudoku_ui.h"
-#include <string>
-#include "raylib.h"
 
 std::string valueToStr(const int v)
 {
