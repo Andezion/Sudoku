@@ -30,6 +30,8 @@ int main()
         statistic_handlers();
         if (const int buttonPressed = buttons_handler(); buttonPressed != 0)
         {
+            gameTimer.start();
+
             currentGameType = buttonPressed;
 
             if (currentGameType == 1)
