@@ -63,8 +63,6 @@ int buttons_handler()
     return 0;
 }
 
-static GameTimer gameTimer;
-
 void statistic_handlers()
 {
     constexpr Rectangle font = { 800, 500, 150, 210 };
@@ -77,6 +75,7 @@ void statistic_handlers()
         gameTimer.getTimeFormatted(hours, minutes, seconds);
 
         const char* timeText = TextFormat("Time: %02d:%02d:%02d", hours, minutes, seconds);
+        std::cout << timeText << std::endl;
         DrawText(timeText, font.x + 10, font.y + 50, 20, DARKGRAY);
     }
     else
