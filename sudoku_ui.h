@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "raylib.h"
+#include <iostream>
 
 struct GameTimer
 {
@@ -42,6 +43,8 @@ struct GameTimer
         seconds = totalSeconds % 60;
     }
 };
+
+static GameTimer gameTimer;
 
 std::string valueToStr(int v);
 int buttons_handler();
