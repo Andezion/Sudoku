@@ -67,8 +67,7 @@ int buttons_handler()
 
 void statistic_handlers()
 {
-    constexpr Rectangle font = { 800, 500, 150, 200 };
-    const Color color_classic = GREEN;
-    DrawRectangleRec(font, color_classic);
+    constexpr Rectangle font = { 800, 500, 150, 210 };
+    DrawRectangleRec(font, LIGHTGRAY);
     //DrawText("Classic", font.x + 20, font.y + 15, 20, DARKGRAY);
 }
