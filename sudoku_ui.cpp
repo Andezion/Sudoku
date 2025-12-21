@@ -43,7 +43,7 @@ int buttons_handler()
     const bool hover_samurai = CheckCollisionPointRec(mouse_samurai, button_samurai);
     const Color color_samurai = hover_samurai ? SKYBLUE : LIGHTGRAY;
     DrawRectangleRec(button_samurai, color_samurai);
-    DrawText("Samurai", button_samurai.x + 20, button_samurai.y + 15, 20, DARKGRAY);
+    DrawText("Samurai", button_samurai.x + 34, button_samurai.y + 15, 20, DARKGRAY);
 
     if (hover_classic && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
     {
