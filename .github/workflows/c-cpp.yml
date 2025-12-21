@@ -16,7 +16,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential cmake pkg-config \
             libopenal-dev libasound2-dev libxcursor-dev libxrandr-dev libx11-dev libgl1-mesa-dev \
-            libraylib-dev
+            raylib-dev
 
       - name: Compile
         run: g++ -std=c++17 -Wall -Wextra -O2 main.cpp -o main -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
