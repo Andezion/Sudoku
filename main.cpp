@@ -112,6 +112,8 @@ int main()
 
         DrawText("Sudoku grid", 20, 20, 20, DARKGRAY);
 
+        buttons_handler();
+
         statistic_handlers();
 
         if (currentGameType == 1)
