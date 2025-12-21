@@ -70,4 +70,6 @@ void statistic_handlers()
     constexpr Rectangle font = { 800, 500, 150, 210 };
     DrawRectangleRec(font, LIGHTGRAY);
     DrawText("Statistics", font.x + 23, font.y + 15, 20, DARKGRAY);
+
+
 }
