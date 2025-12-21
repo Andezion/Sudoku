@@ -316,10 +316,12 @@ void handle9x9(std::array<std::array<int,9>,9>& board,
 
     if (celebrate)
     {
+        gameTimer.reset();
+
         const float alpha = (GetTime() < celebrateEnd) ? 0.95f : 0.95f;
         DrawRectangle(0, 0, screenWidth, screenHeight, Fade(GOLD, alpha));
 
-        const Rectangle againBtn = { static_cast<float>(screenWidth/2 - 75), static_cast<float>(screenHeight/2 - 25), 150.0f, 50.0f };
+        constexpr Rectangle againBtn = { static_cast<float>(screenWidth/2 - 75), static_cast<float>(screenHeight/2 - 25), 150.0f, 50.0f };
         const Vector2 mp = GetMousePosition();
         const bool hover = CheckCollisionPointRec(mp, againBtn);
         DrawRectangleRec(againBtn, hover ? SKYBLUE : LIGHTGRAY);
