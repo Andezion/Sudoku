@@ -49,3 +49,5 @@ static GameTimer gameTimer;
 std::string valueToStr(int v);
 int buttons_handler();
 void statistic_handlers();
+int check_button_press();
+void draw_buttons();
