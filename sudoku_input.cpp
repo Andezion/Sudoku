@@ -317,6 +317,7 @@ void handle9x9(std::array<std::array<int,9>,9>& board,
     if (celebrate)
     {
         gameTimer.reset();
+        counter++;
 
         const float alpha = (GetTime() < celebrateEnd) ? 0.95f : 0.95f;
         DrawRectangle(0, 0, screenWidth, screenHeight, Fade(GOLD, alpha));
