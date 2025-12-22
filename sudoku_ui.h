@@ -45,6 +45,7 @@ struct GameTimer
 };
 
 extern GameTimer gameTimer;
+extern int counter;
 
 std::string valueToStr(int v);
 int buttons_handler();
