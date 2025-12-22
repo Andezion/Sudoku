@@ -86,5 +86,12 @@ void statistic_handlers()
         DrawText("Time: --:--:--", font.x + 10, font.y + 50, 20, GRAY);
     }
 
-    DrawText(std::to_string(counter).c_str(), font.x + 40, font.y + 50, 20, DARKGRAY);
+    if (counter == 0)
+    {
+        DrawText(("Counter: " + std::to_string(counter)).c_str(), font.x + 10, font.y + 80, 20, GRAY);
+    }
+    else
+    {
+        DrawText(("Counter: " + std::to_string(counter)).c_str(), font.x + 10, font.y + 80, 20, DARKGRAY);
+    }
 }
