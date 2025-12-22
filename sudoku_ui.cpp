@@ -1,6 +1,7 @@
 #include "sudoku_ui.h"
 
 GameTimer gameTimer;
+int counter = 0;
 
 std::string valueToStr(const int v)
 {
@@ -84,4 +85,6 @@ void statistic_handlers()
     {
         DrawText("Time: --:--:--", font.x + 10, font.y + 50, 20, GRAY);
     }
+
+    DrawText(std::to_string(counter).c_str(), font.x + 40, font.y + 50, 20, DARKGRAY);
 }
