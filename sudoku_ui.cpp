@@ -97,4 +97,31 @@ void statistic_handlers()
     {
         DrawText(("Counter: " + std::to_string(counter)).c_str(), font.x + 10, font.y + 80, 20, DARKGRAY);
     }
+
+    if (last_remaining_steps == 0)
+    {
+        DrawText(("Remaining: " + std::to_string(last_remaining_steps)).c_str(), font.x + 10, font.y + 110, 20, GRAY);
+    }
+    else
+    {
+        DrawText(("Remaining: " + std::to_string(last_remaining_steps)).c_str(), font.x + 10, font.y + 110, 20, DARKGRAY);
+    }
+
+    if (last_solver_steps == 0)
+    {
+        DrawText(TextFormat("Alg steps: %d", last_solver_steps), font.x + 10, font.y + 140, 20, GRAY);
+    }
+    else
+    {
+        DrawText(TextFormat("Alg steps: %d", last_solver_steps), font.x + 10, font.y + 140, 20, DARKGRAY);
+    }
+
+    if (last_solver_time_ms <= 0.0)
+    {
+        DrawText("Alg time: 0 ms", font.x + 10, font.y + 170, 20, GRAY);
+    }
+    else
+    {
+        DrawText(TextFormat("Alg time: %.0f ms", last_solver_time_ms), font.x + 10, font.y + 170, 20, DARKGRAY);
+    }
 }
