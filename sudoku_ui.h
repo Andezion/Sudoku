@@ -46,6 +46,9 @@ struct GameTimer
 
 extern GameTimer gameTimer;
 extern int counter;
+extern int last_remaining_steps;
+extern int last_solver_steps;
+extern double last_solver_time_ms;
 
 std::string valueToStr(int v);
 int buttons_handler();
