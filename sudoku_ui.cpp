@@ -109,19 +109,19 @@ void statistic_handlers()
 
     if (last_solver_steps == 0)
     {
-        DrawText(TextFormat("Alg steps: %d", last_solver_steps), font.x + 10, font.y + 140, 20, GRAY);
+        DrawText(TextFormat("Steps: %d", last_solver_steps), font.x + 10, font.y + 140, 20, GRAY);
     }
     else
     {
-        DrawText(TextFormat("Alg steps: %d", last_solver_steps), font.x + 10, font.y + 140, 20, DARKGRAY);
+        DrawText(TextFormat("Steps: %d", last_solver_steps), font.x + 10, font.y + 140, 20, DARKGRAY);
     }
 
     if (last_solver_time_ms <= 0.0)
     {
-        DrawText("Alg time: 0 ms", font.x + 10, font.y + 170, 20, GRAY);
+        DrawText("Time: - ms", font.x + 10, font.y + 170, 20, GRAY);
     }
     else
     {
-        DrawText(TextFormat("Alg time: %.0f ms", last_solver_time_ms), font.x + 10, font.y + 170, 20, DARKGRAY);
+        DrawText(TextFormat("Time: %.0f ms", last_solver_time_ms), font.x + 10, font.y + 170, 20, DARKGRAY);
     }
 }
