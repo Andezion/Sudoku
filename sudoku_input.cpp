@@ -311,15 +311,14 @@ void handle9x9(std::array<std::array<int,9>,9>& board,
     if (!celebrate && is_solved9())
     {
         celebrate = true;
-        celebrateEnd = GetTime() + 1.0; 
+        celebrateEnd = GetTime() + 1.0;
+        gameTimer.reset();
+        ++counter;
     }
 
     if (celebrate)
     {
-        gameTimer.reset();
-        counter++;
-
-        const float alpha = (GetTime() < celebrateEnd) ? 0.95f : 0.95f;
+        const float alpha = GetTime() < celebrateEnd ? 0.95f : 0.95f;
         DrawRectangle(0, 0, screenWidth, screenHeight, Fade(GOLD, alpha));
 
         constexpr Rectangle againBtn = { static_cast<float>(screenWidth/2 - 75), static_cast<float>(screenHeight/2 - 25), 150.0f, 50.0f };
@@ -605,17 +604,28 @@ void handle16x16(std::array<std::array<int,16>,16>& board,
     static bool celebrate16 = false;
     static double celebrate16End = 0.0;
 
-    auto is_solved16 = [&]() -> bool {
-        if (!checker_ptr) return false;
+    auto is_solved16 = [&]() -> bool
+    {
+        if (!checker_ptr)
+        {
+            return false;
+        }
         for (int r = 0; r < 16; ++r)
         {
             for (int c = 0; c < 16; ++c)
             {
                 const int v = board[r][c];
-                if (v == 0) return false;
+                if (v == 0)
+                {
+                    return false;
+                }
+
                 auto copy = board;
                 copy[r][c] = 0;
-                if (!checker_ptr->is_valid_sudoku(copy, r, c, v)) return false;
+                if (!checker_ptr->is_valid_sudoku(copy, r, c, v))
+                {
+                    return false;
+                }
             }
         }
         return true;
@@ -625,6 +635,8 @@ void handle16x16(std::array<std::array<int,16>,16>& board,
     {
         celebrate16 = true;
         celebrate16End = GetTime() + 1.0;
+        gameTimer.reset();
+        ++counter;
     }
 
     if (celebrate16)
