@@ -41,6 +41,28 @@ int main()
                 sudoku_generator_classic generator(*checker_ptr, solver);
                 sudoku9x9 = generator.generate9(8);
 
+                {
+                    int zeros = 0;
+                    for (int r = 0; r < 9; ++r)
+                    {
+                        for (int c = 0; c < 9; ++c)
+                        {
+                            if (sudoku9x9[r][c] == 0)
+                            {
+                                ++zeros;
+                            }
+                        }
+                    }
+
+                    last_remaining_steps = zeros;
+                }
+
+                {
+                    auto copy = sudoku9x9;
+                    solver.solve_with_stats(copy);
+                    last_solver_steps = static_cast<int>(solver.get_last_steps());
+                    last_solver_time_ms = solver.get_last_time_ms();
+                }
                 for (int r = 0; r < 9; ++r)
                 {
                     for (int c = 0; c < 9; ++c)
@@ -59,6 +81,28 @@ int main()
                 sudoku_generator_diagonal generator(*checker_ptr, solver);
                 sudoku9x9 = generator.generate9(5);
 
+                {
+                    int zeros = 0;
+                    for (int r = 0; r < 9; ++r)
+                    {
+                        for (int c = 0; c < 9; ++c)
+                        {
+                            if (sudoku9x9[r][c] == 0)
+                            {
+                                ++zeros;
+                            }
+                        }
+                    }
+
+                    last_remaining_steps = zeros;
+                }
+
+                {
+                    auto copy = sudoku9x9;
+                    solver.solve_with_stats(copy);
+                    last_solver_steps = static_cast<int>(solver.get_last_steps());
+                    last_solver_time_ms = solver.get_last_time_ms();
+                }
                 for (int r = 0; r < 9; ++r)
                 {
                     for (int c = 0; c < 9; ++c)
@@ -77,6 +121,28 @@ int main()
                 sudoku_generator_big generator(*checker_ptr, solver);
                 sudoku16x16 = generator.generate16(5);
 
+                {
+                    int zeros = 0;
+                    for (int r = 0; r < 16; ++r)
+                    {
+                        for (int c = 0; c < 16; ++c)
+                        {
+                            if (sudoku16x16[r][c] == 0)
+                            {
+                                ++zeros;
+                            }
+                        }
+                    }
+
+                    last_remaining_steps = zeros;
+                }
+
+                {
+                    auto copy = sudoku16x16;
+                    solver.solve_with_stats(copy);
+                    last_solver_steps = static_cast<int>(solver.get_last_steps());
+                    last_solver_time_ms = solver.get_last_time_ms();
+                }
                 for (int r = 0; r < 16; ++r)
                 {
                     for (int c = 0; c < 16; ++c)
@@ -95,6 +161,28 @@ int main()
                 sudoku_generator_samurai generator(*checker_ptr, solver);
                 sudoku16x16 = generator.generate16(5);
 
+                {
+                    int zeros = 0;
+                    for (int r = 0; r < 16; ++r)
+                    {
+                        for (int c = 0; c < 16; ++c)
+                        {
+                            if (sudoku16x16[r][c] == 0)
+                            {
+                                ++zeros;
+                            }
+                        }
+                    }
+
+                    last_remaining_steps = zeros;
+                }
+
+                {
+                    auto copy = sudoku16x16;
+                    solver.solve_with_stats(copy);
+                    last_solver_steps = static_cast<int>(solver.get_last_steps());
+                    last_solver_time_ms = solver.get_last_time_ms();
+                }
                 for (int r = 0; r < 16; ++r)
                 {
                     for (int c = 0; c < 16; ++c)
