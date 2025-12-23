@@ -2,6 +2,9 @@
 
 GameTimer gameTimer;
 int counter = 0;
+int last_remaining_steps{};
+int last_solver_steps{};
+double last_solver_time_ms{};
 
 std::string valueToStr(const int v)
 {
