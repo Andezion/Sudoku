@@ -1,6 +1,5 @@
 #pragma once
 
-// Shared UI/layout constants
 inline constexpr int screenWidth = 1000;
 inline constexpr int screenHeight = 800;
 
@@ -17,3 +16,10 @@ inline constexpr int gridPixelSize_big = gridSize_big * cellSize_big;
 
 inline constexpr int offsetX_big = (screenWidth - 200 - gridPixelSize_big) / 2;
 inline constexpr int offsetY_big = (screenHeight - gridPixelSize_big) / 2;
+
+inline constexpr int gridSize_samurai = 21;
+inline constexpr int cellSize_samurai = 28;
+inline constexpr int gridPixelSize_samurai = gridSize_samurai * cellSize_samurai;
+
+inline constexpr int offsetX_samurai = (screenWidth - 200 - gridPixelSize_samurai) / 2;
+inline constexpr int offsetY_samurai = (screenHeight - gridPixelSize_samurai) / 2;
