@@ -31,3 +31,11 @@ void handle16x16(std::array<std::array<int,16>,16>& board,
                  int& selectedRow,
                                  int& selectedCol,
                                  int& currentGameType);
+
+void handleSamurai(std::array<std::array<int,21>,21>& board,
+                   const std::array<std::array<bool,21>,21>& fixed,
+                   const std::unique_ptr<sudoku_checker>& checker_ptr,
+                   HighlightState& highlight,
+                   int& selectedRow,
+                   int& selectedCol,
+                   int& currentGameType);
