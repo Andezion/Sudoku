@@ -100,11 +100,11 @@ void statistic_handlers()
 
     if (last_remaining_steps == 0)
     {
-        DrawText(("Remaining: " + std::to_string(last_remaining_steps)).c_str(), font.x + 10, font.y + 110, 20, GRAY);
+        DrawText(("Left: " + std::to_string(last_remaining_steps)).c_str(), font.x + 10, font.y + 110, 20, GRAY);
     }
     else
     {
-        DrawText(("Remaining: " + std::to_string(last_remaining_steps)).c_str(), font.x + 10, font.y + 110, 20, DARKGRAY);
+        DrawText(("Left: " + std::to_string(last_remaining_steps)).c_str(), font.x + 10, font.y + 110, 20, DARKGRAY);
     }
 
     if (last_solver_steps == 0)
@@ -122,6 +122,6 @@ void statistic_handlers()
     }
     else
     {
-        DrawText(TextFormat("Time: %.0f ms", last_solver_time_ms), font.x + 10, font.y + 170, 20, DARKGRAY);
+        DrawText(TextFormat("Time: %.0f mks", last_solver_time_ms / 1000.0), font.x + 10, font.y + 170, 20, DARKGRAY);
     }
 }
