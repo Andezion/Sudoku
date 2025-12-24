@@ -16,8 +16,10 @@ int main()
     int currentGameType = 0;
     std::array<std::array<int, 9>, 9> sudoku9x9{};
     std::array<std::array<int, 16>, 16> sudoku16x16{};
+    std::array<std::array<int, 21>, 21> sudoku21x21{};
     std::array<std::array<bool, 9>, 9> fixed9x9{};
     std::array<std::array<bool, 16>, 16> fixed16x16{};
+    std::array<std::array<bool, 21>, 21> fixed21x21{};
 
     int selectedRow = -1;
     int selectedCol = -1;
@@ -153,21 +155,21 @@ int main()
 
                 highlight.active = false;
             }
-            else
+            else if (currentGameType == 4)
             {
                 checker_ptr = std::make_unique<sudoku_checker_samurai>();
                 const sudoku_solver_samurai solver(*checker_ptr);
 
                 sudoku_generator_samurai generator(*checker_ptr, solver);
-                sudoku16x16 = generator.generate16(5);
+                sudoku21x21 = generator.generate21(5);
 
                 {
                     int zeros = 0;
-                    for (int r = 0; r < 16; ++r)
+                    for (int r = 0; r < 21; ++r)
                     {
-                        for (int c = 0; c < 16; ++c)
+                        for (int c = 0; c < 21; ++c)
                         {
-                            if (sudoku16x16[r][c] == 0)
+                            if (sudoku21x21[r][c] == 0)
                             {
                                 ++zeros;
                             }
@@ -178,16 +180,16 @@ int main()
                 }
 
                 {
-                    auto copy = sudoku16x16;
+                    auto copy = sudoku21x21;
                     solver.solve_with_stats(copy);
                     last_solver_steps = static_cast<int>(solver.get_last_steps());
                     last_solver_time_ms = solver.get_last_time_ms();
                 }
-                for (int r = 0; r < 16; ++r)
+                for (int r = 0; r < 21; ++r)
                 {
-                    for (int c = 0; c < 16; ++c)
+                    for (int c = 0; c < 21; ++c)
                     {
-                        fixed16x16[r][c] = sudoku16x16[r][c] != 0;
+                        fixed21x21[r][c] = sudoku21x21[r][c] > 0;
                     }
                 }
 
@@ -215,6 +217,10 @@ int main()
         else if (currentGameType == 3)
         {
             handle16x16(sudoku16x16, fixed16x16, checker_ptr, highlight, selectedRow, selectedCol, currentGameType);
+        }
+        else if (currentGameType == 4)
+        {
+            handleSamurai(sudoku21x21, fixed21x21, checker_ptr, highlight, selectedRow, selectedCol, currentGameType);
         }
 
         EndDrawing();
