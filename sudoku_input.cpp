@@ -341,6 +341,361 @@ void handle9x9(std::array<std::array<int,9>,9>& board,
     }
 }
 
+void handleSamurai(std::array<std::array<int,21>,21>& board,
+                   const std::array<std::array<bool,21>,21>& fixed,
+                   const std::unique_ptr<sudoku_checker>& checker_ptr,
+                   HighlightState& highlight,
+                   int& selectedRow,
+                   int& selectedCol,
+                   int& currentGameType)
+{
+    const auto [x, y] = GetMousePosition();
+
+    auto cellExists = [&](const int r, const int c) -> bool
+    {
+        if (r >= 0 && r <= 8 && c >= 0 && c <= 8)
+        {
+            return true;
+        }
+        if (r >= 0 && r <= 8 && c >= 12 && c <= 20)
+        {
+            return true;
+        }
+        if (r >= 6 && r <= 14 && c >= 6 && c <= 14)
+        {
+            return true;
+        }
+        if (r >= 12 && r <= 20 && c >= 0 && c <= 8)
+        {
+            return true;
+        }
+        if (r >= 12 && r <= 20 && c >= 12 && c <= 20)
+        {
+            return true;
+        }
+        return false;
+    };
+
+    int hoverRow = -1;
+    int hoverCol = -1;
+
+    if (x >= offsetX_samurai && x < offsetX_samurai + gridPixelSize_samurai &&
+        y >= offsetY_samurai && y < offsetY_samurai + gridPixelSize_samurai)
+    {
+        const int c = static_cast<int>((x - offsetX_samurai) / cellSize_samurai);
+
+        if (const int r = static_cast<int>((y - offsetY_samurai) / cellSize_samurai);
+            r >= 0 && r < 21 && c >= 0 && c < 21 && cellExists(r, c))
+        {
+            hoverRow = r;
+            hoverCol = c;
+            const Rectangle hoverRec = {
+                static_cast<float>(offsetX_samurai + hoverCol * cellSize_samurai),
+                static_cast<float>(offsetY_samurai + hoverRow * cellSize_samurai),
+                static_cast<float>(cellSize_samurai),
+                static_cast<float>(cellSize_samurai)
+            };
+            DrawRectangleRec(hoverRec, Fade(SKYBLUE, 0.25f));
+        }
+    }
+
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && hoverRow != -1 && hoverCol != -1)
+    {
+        selectedRow = hoverRow;
+        selectedCol = hoverCol;
+    }
+
+    if (selectedRow != -1 && selectedCol != -1 && cellExists(selectedRow, selectedCol))
+    {
+        const Rectangle selRec = {
+            static_cast<float>(offsetX_samurai + selectedCol * cellSize_samurai),
+            static_cast<float>(offsetY_samurai + selectedRow * cellSize_samurai),
+            static_cast<float>(cellSize_samurai),
+            static_cast<float>(cellSize_samurai)
+        };
+        DrawRectangleRec(selRec, Fade(GREEN, 0.25f));
+
+        auto try_place = [&](const int value)
+        {
+            if (fixed[selectedRow][selectedCol])
+            {
+                highlight.active = true;
+                highlight.expiresAt = GetTime() + 1.0;
+                highlight.selRow = selectedRow;
+                highlight.selCol = selectedCol;
+                highlight.conflictRow = -1;
+                highlight.conflictCol = -1;
+                return;
+            }
+
+            auto boardCopy = board;
+            boardCopy[selectedRow][selectedCol] = 0;
+
+            if (checker_ptr)
+            {
+                if (checker_ptr->is_valid_sudoku(boardCopy, selectedRow, selectedCol, value))
+                {
+                    board[selectedRow][selectedCol] = value;
+                    highlight.active = false;
+                }
+                else
+                {
+                    int cr = -1, cc = -1;
+
+                    int r0 = 0, c0 = 0;
+                    if (selectedRow >= 0 && selectedRow <= 8 && selectedCol >= 0 && selectedCol <= 8)
+                    {
+                        r0 = 0;
+                        c0 = 0;
+                    }
+                    else if (selectedRow >= 0 && selectedRow <= 8 && selectedCol >= 12 && selectedCol <= 20)
+                    {
+                        r0 = 0;
+                        c0 = 12;
+                    }
+                    else if (selectedRow >= 6 && selectedRow <= 14 && selectedCol >= 6 && selectedCol <= 14)
+                    {
+                        r0 = 6;
+                        c0 = 6;
+                    }
+                    else if (selectedRow >= 12 && selectedRow <= 20 && selectedCol >= 0 && selectedCol <= 8)
+                    {
+                        r0 = 12;
+                        c0 = 0;
+                    }
+                    else if (selectedRow >= 12 && selectedRow <= 20 && selectedCol >= 12 && selectedCol <= 20)
+                    {
+                        r0 = 12;
+                        c0 = 12;
+                    }
+
+                    for (int c = 0; c < 9; ++c)
+                    {
+                        if (board[selectedRow][c0 + c] == value)
+                        {
+                            cr = selectedRow; cc = c0 + c;
+                            break;
+                        }
+                    }
+
+                    if (cr == -1)
+                    {
+                        for (int r = 0; r < 9; ++r)
+                        {
+                            if (board[r0 + r][selectedCol] == value)
+                            {
+                                cr = r0 + r; cc = selectedCol;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (cr == -1)
+                    {
+                        const int br = r0 + (selectedRow - r0) / 3 * 3;
+                        const int bc = c0 + (selectedCol - c0) / 3 * 3;
+                        for (int i = 0; i < 3; ++i)
+                        {
+                            for (int j = 0; j < 3; ++j)
+                            {
+                                if (board[br + i][bc + j] == value)
+                                {
+                                    cr = br + i; cc = bc + j;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    highlight.active = true;
+                    highlight.expiresAt = GetTime() + 2.0;
+                    highlight.selRow = selectedRow;
+                    highlight.selCol = selectedCol;
+                    highlight.conflictRow = cr;
+                    highlight.conflictCol = cc;
+                    highlight.diagonalType = 0;
+                    highlight.conflictValue = 0;
+                }
+            }
+            else
+            {
+                board[selectedRow][selectedCol] = value;
+                highlight.active = false;
+            }
+        };
+
+        if (IsKeyPressed(KEY_ONE)) try_place(1);
+        if (IsKeyPressed(KEY_TWO)) try_place(2);
+        if (IsKeyPressed(KEY_THREE)) try_place(3);
+        if (IsKeyPressed(KEY_FOUR)) try_place(4);
+        if (IsKeyPressed(KEY_FIVE)) try_place(5);
+        if (IsKeyPressed(KEY_SIX)) try_place(6);
+        if (IsKeyPressed(KEY_SEVEN)) try_place(7);
+        if (IsKeyPressed(KEY_EIGHT)) try_place(8);
+        if (IsKeyPressed(KEY_NINE)) try_place(9);
+    }
+
+    if (highlight.active)
+    {
+        if (GetTime() > highlight.expiresAt)
+        {
+            highlight.active = false;
+            highlight.conflictRow = -1;
+            highlight.conflictCol = -1;
+            highlight.diagonalType = 0;
+            highlight.conflictValue = 0;
+        }
+        else
+        {
+            if (highlight.conflictRow != -1 && highlight.conflictCol != -1)
+            {
+                for (int c = 0; c < 21; ++c)
+                {
+                    if (!cellExists(highlight.selRow, c)) continue;
+                    const Rectangle r = {
+                        static_cast<float>(offsetX_samurai + c * cellSize_samurai),
+                        static_cast<float>(offsetY_samurai + highlight.selRow * cellSize_samurai),
+                        static_cast<float>(cellSize_samurai),
+                        static_cast<float>(cellSize_samurai)
+                    };
+                    DrawRectangleRec(r, Fade(ORANGE, 0.35f));
+                }
+                for (int r = 0; r < 21; ++r)
+                {
+                    if (!cellExists(r, highlight.selCol))
+                    {
+                        continue;
+                    }
+
+                    const Rectangle rrec = {
+                        static_cast<float>(offsetX_samurai + highlight.selCol * cellSize_samurai),
+                        static_cast<float>(offsetY_samurai + r * cellSize_samurai),
+                        static_cast<float>(cellSize_samurai),
+                        static_cast<float>(cellSize_samurai)
+                    };
+                    DrawRectangleRec(rrec, Fade(ORANGE, 0.35f));
+                }
+
+                const Rectangle confH = {
+                    static_cast<float>(offsetX_samurai + highlight.conflictCol * cellSize_samurai),
+                    static_cast<float>(offsetY_samurai + highlight.conflictRow * cellSize_samurai),
+                    static_cast<float>(cellSize_samurai),
+                    static_cast<float>(cellSize_samurai)
+                };
+                DrawRectangleRec(confH, Fade(RED, 0.6f));
+            }
+        }
+    }
+
+    for (int r = 0; r < 21; ++r)
+    {
+        for (int c = 0; c < 21; ++c)
+        {
+            if (!cellExists(r, c))
+            {
+                continue;
+            }
+
+            const Rectangle crect = {
+                static_cast<float>(offsetX_samurai + c * cellSize_samurai),
+                static_cast<float>(offsetY_samurai + r * cellSize_samurai),
+                static_cast<float>(cellSize_samurai),
+                static_cast<float>(cellSize_samurai)
+            };
+
+            DrawRectangleLinesEx(crect, 1.0f, BLACK);
+            if (const int v = board[r][c]; v != 0)
+            {
+                const int posX = offsetX_samurai + c * cellSize_samurai + cellSize_samurai / 2 - 8;
+                const int posY = offsetY_samurai + r * cellSize_samurai + cellSize_samurai / 2 - 10;
+
+                DrawText(TextFormat("%d", v), posX, posY, 20, BLACK);
+            }
+        }
+    }
+
+    const std::array<std::pair<int,int>,5> blocks = {{{0,0},{0,12},{6,6},{12,0},{12,12}}};
+    for (const auto &[fst, snd] : blocks)
+    {
+        const int r0 = fst;
+        const int c0 = snd;
+
+        for (int i = 0; i <= 9; ++i)
+        {
+            const int thickness = i % 3 == 0 ? 3 : 1;
+
+            const float y1 = static_cast<float>(offsetY_samurai + (r0 + i) * cellSize_samurai);
+            DrawLineEx({static_cast<float>(offsetX_samurai + c0 * cellSize_samurai), y1},
+                {static_cast<float>(offsetX_samurai + (c0+9) * cellSize_samurai), y1}, thickness, BLACK);
+
+            const float x1 = static_cast<float>(offsetX_samurai + (c0 + i) * cellSize_samurai);
+            DrawLineEx({x1, static_cast<float>(offsetY_samurai + r0 * cellSize_samurai)},
+                {x1, static_cast<float>(offsetY_samurai + (r0+9) * cellSize_samurai)}, thickness, BLACK);
+        }
+    }
+
+    static bool celebrate = false;
+    static double celebrateEnd = 0.0;
+
+    auto is_solved_samurai = [&]() -> bool
+    {
+        if (!checker_ptr)
+        {
+            return false;
+        }
+
+        for (int r = 0; r < 21; ++r)
+        {
+            for (int c = 0; c < 21; ++c)
+            {
+                if (!cellExists(r, c))
+                {
+                    continue;
+                }
+
+                const int v = board[r][c];
+
+                if (v == 0)
+                {
+                    return false;
+                }
+
+                auto copy = board;
+                copy[r][c] = 0;
+                if (!checker_ptr->is_valid_sudoku(copy, r, c, v)) return false;
+            }
+        }
+        return true;
+    };
+
+    if (!celebrate && is_solved_samurai())
+    {
+        celebrate = true;
+        celebrateEnd = GetTime() + 1.0;
+        gameTimer.reset();
+        ++counter;
+    }
+
+    if (celebrate)
+    {
+        DrawRectangle(0, 0, screenWidth, screenHeight, Fade(GOLD, 0.95f));
+
+        constexpr Rectangle againBtn = { static_cast<float>(screenWidth/2 - 75), static_cast<float>(screenHeight/2 - 25), 150.0f, 50.0f };
+        const Vector2 mp = GetMousePosition();
+        const bool hover = CheckCollisionPointRec(mp, againBtn);
+
+        DrawRectangleRec(againBtn, hover ? SKYBLUE : LIGHTGRAY);
+
+        DrawText("Again?!", static_cast<int>(againBtn.x + 25), static_cast<int>(againBtn.y + 12), 30, DARKGRAY);
+
+        if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            celebrate = false;
+            currentGameType = 0;
+        }
+    }
+}
+
 void handle16x16(std::array<std::array<int,16>,16>& board,
                  const std::array<std::array<bool,16>,16>& fixed,
                  const std::unique_ptr<sudoku_checker>& checker_ptr,
