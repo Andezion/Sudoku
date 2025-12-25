@@ -54,10 +54,11 @@ int main()
                     std::thread([&]()
                     {
                         const sudoku_checker_samurai local_checker;
-                        sudoku_solver_samurai local_solver(local_checker);
+                        const sudoku_solver_samurai local_solver(local_checker);
+
                         sudoku_generator_samurai generator(local_checker, local_solver);
 
-                        auto generated = generator.generate21(5);
+                        const auto generated = generator.generate21(5);
 
                         int zeros = 0;
                         for (int r = 0; r < 21; ++r)
@@ -68,9 +69,9 @@ int main()
                             }
                         }
 
-                        // create solved board from generated puzzle
                         auto solved = generated;
                         local_solver.solve_with_stats(solved);
+
                         last_solver_steps = static_cast<int>(local_solver.get_last_steps());
                         last_solver_time_ms = local_solver.get_last_time_ms();
 
@@ -91,7 +92,7 @@ int main()
                         }
 
                         {
-                            std::lock_guard<std::mutex> lock(samurai_mutex);
+                            std::lock_guard lock(samurai_mutex);
                             samurai_board_temp = solved;
                             samurai_fixed_temp = fixed_local;
                         }
@@ -240,13 +241,17 @@ int main()
         
         if (samurai_ready)
         {
-            std::lock_guard<std::mutex> lock(samurai_mutex);
+            std::lock_guard lock(samurai_mutex);
+
             sudoku21x21 = samurai_board_temp;
             fixed21x21 = samurai_fixed_temp;
+
             checker_ptr = std::make_unique<sudoku_checker_samurai>();
             highlight.active = false;
+
             selectedRow = -1;
             selectedCol = -1;
+
             currentGameType = 4;
             samurai_ready = false;
         }
