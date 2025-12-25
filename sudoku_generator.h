@@ -1121,6 +1121,7 @@ public:
 
     static bool create_sudoku(int i, int j, std::vector<int> probability[21][21], std::array<std::array<int, 21>, 21> & sudoku)
     {
+        std::cout << "[DBG] create_sudoku call: (" << i << "," << j << ")\n";
         while (i < 21)
         {
             while (j < 21 && !is_valid_cell(i, j))
@@ -1179,16 +1180,20 @@ public:
         static std::mt19937 rng(std::random_device{}());
         std::shuffle(candidates.begin(), candidates.end(), rng);
 
+        std::cout << "[DBG] candidates for (" << i << "," << j << ") size=" << candidates.size() << "\n";
+
         for (const int num : candidates)
         {
             sudoku[i][j] = num;
+            std::cout << "[DBG] try place " << num << " at (" << i << "," << j << ")\n";
             if (create_sudoku(i, j + 1, probability, sudoku))
             {
+                std::cout << "[DBG] placed " << num << " successfully at (" << i << "," << j << ")\n";
                 return true;
             }
             sudoku[i][j] = 0;
         }
-
+        std::cout << "[DBG] no candidate works for (" << i << "," << j << ")\n";
         return false;
     }
 
