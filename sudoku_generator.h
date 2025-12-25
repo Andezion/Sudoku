@@ -1121,79 +1121,72 @@ public:
 
     static bool create_sudoku(int i, int j, std::vector<int> probability[21][21], std::array<std::array<int, 21>, 21> & sudoku)
     {
-        std::cout << "[DBG] create_sudoku call: (" << i << "," << j << ")\n";
-        while (i < 21)
+        int ni = -1, nj = -1;
+        for (int r = i; r < 21 && ni == -1; ++r)
         {
-            while (j < 21 && !is_valid_cell(i, j))
+            for (int c = (r == i ? j : 0); c < 21; ++c)
             {
-                j++;
+                if (is_valid_cell(r, c) && sudoku[r][c] == 0)
+                {
+                    ni = r;
+                    nj = c;
+                    break;
+                }
             }
-
-            if (j < 21) break;
-
-            j = 0;
-            i++;
         }
 
-        if (i == 21)
+        if (ni == -1)
         {
             return true;
         }
 
-        if (sudoku[i][j] != 0)
-        {
-            return create_sudoku(i, j + 1, probability, sudoku);
-        }
+        i = ni; j = nj;
 
-        std::vector candidates = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+        std::vector<int> candidates = {1,2,3,4,5,6,7,8,9};
 
-        for (int col = 0; col < 21; col++)
+        for (int col = 0; col < 21; ++col)
         {
-            if (is_valid_cell(i, col))
+            if (is_valid_cell(i, col) && sudoku[i][col] > 0)
             {
-                candidates.erase(std::remove(candidates.begin(), candidates.end(),
-                               sudoku[i][col]), candidates.end());
+                candidates.erase(std::remove(candidates.begin(), candidates.end(), sudoku[i][col]), candidates.end());
             }
         }
 
-        for (int row = 0; row < 21; row++)
+        for (int row = 0; row < 21; ++row)
         {
-            if (is_valid_cell(row, j))
+            if (is_valid_cell(row, j) && sudoku[row][j] > 0)
             {
-                candidates.erase(std::remove(candidates.begin(), candidates.end(),
-                               sudoku[row][j]), candidates.end());
+                candidates.erase(std::remove(candidates.begin(), candidates.end(), sudoku[row][j]), candidates.end());
             }
         }
 
-        int start_i, start_j;
+        int start_i = 0, start_j = 0;
         get_box_start(i, j, start_i, start_j);
 
-        for (int r = start_i; r < start_i + 3; r++)
+        for (int r = start_i; r < start_i + 3; ++r)
         {
-            for (int c = start_j; c < start_j + 3; c++)
+            for (int c = start_j; c < start_j + 3; ++c)
             {
-                candidates.erase(std::remove(candidates.begin(), candidates.end(),
-                               sudoku[r][c]), candidates.end());
+                if (r >= 0 && r < 21 && c >= 0 && c < 21 && is_valid_cell(r, c) && sudoku[r][c] > 0)
+                {
+                    candidates.erase(std::remove(candidates.begin(), candidates.end(), sudoku[r][c]), candidates.end());
+                }
             }
         }
 
         static std::mt19937 rng(std::random_device{}());
         std::shuffle(candidates.begin(), candidates.end(), rng);
 
-        std::cout << "[DBG] candidates for (" << i << "," << j << ") size=" << candidates.size() << "\n";
-
         for (const int num : candidates)
         {
             sudoku[i][j] = num;
-            std::cout << "[DBG] try place " << num << " at (" << i << "," << j << ")\n";
             if (create_sudoku(i, j + 1, probability, sudoku))
             {
-                std::cout << "[DBG] placed " << num << " successfully at (" << i << "," << j << ")\n";
                 return true;
             }
             sudoku[i][j] = 0;
         }
-        std::cout << "[DBG] no candidate works for (" << i << "," << j << ")\n";
+
         return false;
     }
 
