@@ -65,7 +65,10 @@ int main()
                         {
                             for (int c = 0; c < 21; ++c)
                             {
-                                if (generated[r][c] == 0) ++zeros;
+                                if (generated[r][c] == 0)
+                                {
+                                    ++zeros;
+                                }
                             }
                         }
 
@@ -82,7 +85,7 @@ int main()
                             {
                                 if (sudoku_generator_samurai::is_valid_cell(r, c))
                                 {
-                                    fixed_local[r][c] = true;
+                                    fixed_local[r][c] = generated[r][c] > 0;
                                 }
                                 else
                                 {
@@ -93,7 +96,8 @@ int main()
 
                         {
                             std::lock_guard lock(samurai_mutex);
-                            samurai_board_temp = solved;
+                            
+                            samurai_board_temp = generated;
                             samurai_fixed_temp = fixed_local;
                         }
 
