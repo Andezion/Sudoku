@@ -4,6 +4,9 @@
 #include "raylib.h"
 #include <memory>
 #include <array>
+#include <thread>
+#include <atomic>
+#include <mutex>
 #include "sudoku_ui.h"
 #include "sudoku_input.h"
 #include "sudoku_constants.h"
@@ -27,173 +30,194 @@ int main()
     std::unique_ptr<sudoku_checker> checker_ptr;
     HighlightState highlight;
 
+    std::atomic<bool> samurai_generating{false};
+    std::atomic<bool> samurai_ready{false};
+
+    std::array<std::array<int, 21>, 21> samurai_board_temp{};
+    std::array<std::array<bool, 21>, 21> samurai_fixed_temp{};
+    std::mutex samurai_mutex;
+
     while (!WindowShouldClose())
     {
         if (const int buttonPressed = buttons_handler(); buttonPressed != 0)
         {
             gameTimer.start();
 
-            currentGameType = buttonPressed;
-
-            if (currentGameType == 1)
+            if (buttonPressed == 4)
             {
-                checker_ptr = std::make_unique<sudoku_checker_classic>();
-                const sudoku_solver_classic solver(*checker_ptr);
-
-                sudoku_generator_classic generator(*checker_ptr, solver);
-                sudoku9x9 = generator.generate9(8);
-
+                if (!samurai_generating)
                 {
-                    int zeros = 0;
+                    samurai_generating = true;
+                    samurai_ready = false;
+
+                    std::thread([&]() {
+                        sudoku_checker_samurai local_checker;
+                        sudoku_solver_samurai local_solver(local_checker);
+                        sudoku_generator_samurai generator(local_checker, local_solver);
+
+                        auto generated = generator.generate21(5);
+
+                        int zeros = 0;
+                        for (int r = 0; r < 21; ++r)
+                        {
+                            for (int c = 0; c < 21; ++c)
+                            {
+                                if (generated[r][c] == 0) ++zeros;
+                            }
+                        }
+
+                        {
+                            auto copy = generated;
+                            local_solver.solve_with_stats(copy);
+                            last_solver_steps = static_cast<int>(local_solver.get_last_steps());
+                            last_solver_time_ms = local_solver.get_last_time_ms();
+                        }
+
+                        std::array<std::array<bool,21>,21> fixed_local{};
+                        for (int r = 0; r < 21; ++r)
+                        {
+                            for (int c = 0; c < 21; ++c)
+                            {
+                                fixed_local[r][c] = generated[r][c] > 0;
+                            }
+                        }
+
+                        {
+                            std::lock_guard<std::mutex> lock(samurai_mutex);
+                            samurai_board_temp = generated;
+                            samurai_fixed_temp = fixed_local;
+                        }
+
+                        last_remaining_steps = zeros;
+                        samurai_ready = true;
+                        samurai_generating = false;
+                    }).detach();
+                }
+            }
+            else
+            {
+                currentGameType = buttonPressed;
+
+                if (currentGameType == 1)
+                {
+                    checker_ptr = std::make_unique<sudoku_checker_classic>();
+                    const sudoku_solver_classic solver(*checker_ptr);
+
+                    sudoku_generator_classic generator(*checker_ptr, solver);
+                    sudoku9x9 = generator.generate9(8);
+
+                    {
+                        int zeros = 0;
+                        for (int r = 0; r < 9; ++r)
+                        {
+                            for (int c = 0; c < 9; ++c)
+                            {
+                                if (sudoku9x9[r][c] == 0)
+                                {
+                                    ++zeros;
+                                }
+                            }
+                        }
+
+                        last_remaining_steps = zeros;
+                    }
+
+                    {
+                        auto copy = sudoku9x9;
+                        solver.solve_with_stats(copy);
+                        last_solver_steps = static_cast<int>(solver.get_last_steps());
+                        last_solver_time_ms = solver.get_last_time_ms();
+                    }
                     for (int r = 0; r < 9; ++r)
                     {
                         for (int c = 0; c < 9; ++c)
                         {
-                            if (sudoku9x9[r][c] == 0)
-                            {
-                                ++zeros;
-                            }
+                            fixed9x9[r][c] = sudoku9x9[r][c] != 0;
                         }
                     }
 
-                    last_remaining_steps = zeros;
+                    highlight.active = false;
                 }
+                else if (currentGameType == 2)
+                {
+                    checker_ptr = std::make_unique<sudoku_checker_diagonal>();
+                    const sudoku_solver_diagonal solver(*checker_ptr);
 
-                {
-                    auto copy = sudoku9x9;
-                    solver.solve_with_stats(copy);
-                    last_solver_steps = static_cast<int>(solver.get_last_steps());
-                    last_solver_time_ms = solver.get_last_time_ms();
-                }
-                for (int r = 0; r < 9; ++r)
-                {
-                    for (int c = 0; c < 9; ++c)
+                    sudoku_generator_diagonal generator(*checker_ptr, solver);
+                    sudoku9x9 = generator.generate9(5);
+
                     {
-                        fixed9x9[r][c] = sudoku9x9[r][c] != 0;
+                        int zeros = 0;
+                        for (int r = 0; r < 9; ++r)
+                        {
+                            for (int c = 0; c < 9; ++c)
+                            {
+                                if (sudoku9x9[r][c] == 0)
+                                {
+                                    ++zeros;
+                                }
+                            }
+                        }
+
+                        last_remaining_steps = zeros;
                     }
-                }
 
-                highlight.active = false;
-            }
-            else if (currentGameType == 2)
-            {
-                checker_ptr = std::make_unique<sudoku_checker_diagonal>();
-                const sudoku_solver_diagonal solver(*checker_ptr);
-
-                sudoku_generator_diagonal generator(*checker_ptr, solver);
-                sudoku9x9 = generator.generate9(5);
-
-                {
-                    int zeros = 0;
+                    {
+                        auto copy = sudoku9x9;
+                        solver.solve_with_stats(copy);
+                        last_solver_steps = static_cast<int>(solver.get_last_steps());
+                        last_solver_time_ms = solver.get_last_time_ms();
+                    }
                     for (int r = 0; r < 9; ++r)
                     {
                         for (int c = 0; c < 9; ++c)
                         {
-                            if (sudoku9x9[r][c] == 0)
-                            {
-                                ++zeros;
-                            }
+                            fixed9x9[r][c] = sudoku9x9[r][c] != 0;
                         }
                     }
 
-                    last_remaining_steps = zeros;
+                    highlight.active = false;
                 }
+                else if (currentGameType == 3)
+                {
+                    checker_ptr = std::make_unique<sudoku_checker_big>();
+                    const sudoku_solver_big solver(*checker_ptr);
 
-                {
-                    auto copy = sudoku9x9;
-                    solver.solve_with_stats(copy);
-                    last_solver_steps = static_cast<int>(solver.get_last_steps());
-                    last_solver_time_ms = solver.get_last_time_ms();
-                }
-                for (int r = 0; r < 9; ++r)
-                {
-                    for (int c = 0; c < 9; ++c)
+                    sudoku_generator_big generator(*checker_ptr, solver);
+                    sudoku16x16 = generator.generate16(5);
+
                     {
-                        fixed9x9[r][c] = sudoku9x9[r][c] != 0;
+                        int zeros = 0;
+                        for (int r = 0; r < 16; ++r)
+                        {
+                            for (int c = 0; c < 16; ++c)
+                            {
+                                if (sudoku16x16[r][c] == 0)
+                                {
+                                    ++zeros;
+                                }
+                            }
+                        }
+
+                        last_remaining_steps = zeros;
                     }
-                }
 
-                highlight.active = false;
-            }
-            else if (currentGameType == 3)
-            {
-                checker_ptr = std::make_unique<sudoku_checker_big>();
-                const sudoku_solver_big solver(*checker_ptr);
-
-                sudoku_generator_big generator(*checker_ptr, solver);
-                sudoku16x16 = generator.generate16(5);
-
-                {
-                    int zeros = 0;
+                    {
+                        auto copy = sudoku16x16;
+                        solver.solve_with_stats(copy);
+                        last_solver_steps = static_cast<int>(solver.get_last_steps());
+                        last_solver_time_ms = solver.get_last_time_ms();
+                    }
                     for (int r = 0; r < 16; ++r)
                     {
                         for (int c = 0; c < 16; ++c)
                         {
-                            if (sudoku16x16[r][c] == 0)
-                            {
-                                ++zeros;
-                            }
+                            fixed16x16[r][c] = sudoku16x16[r][c] != 0;
                         }
                     }
 
-                    last_remaining_steps = zeros;
+                    highlight.active = false;
                 }
-
-                {
-                    auto copy = sudoku16x16;
-                    solver.solve_with_stats(copy);
-                    last_solver_steps = static_cast<int>(solver.get_last_steps());
-                    last_solver_time_ms = solver.get_last_time_ms();
-                }
-                for (int r = 0; r < 16; ++r)
-                {
-                    for (int c = 0; c < 16; ++c)
-                    {
-                        fixed16x16[r][c] = sudoku16x16[r][c] != 0;
-                    }
-                }
-
-                highlight.active = false;
-            }
-            else if (currentGameType == 4)
-            {
-                checker_ptr = std::make_unique<sudoku_checker_samurai>();
-                const sudoku_solver_samurai solver(*checker_ptr);
-
-                sudoku_generator_samurai generator(*checker_ptr, solver);
-                sudoku21x21 = generator.generate21(5);
-
-                {
-                    int zeros = 0;
-                    for (int r = 0; r < 21; ++r)
-                    {
-                        for (int c = 0; c < 21; ++c)
-                        {
-                            if (sudoku21x21[r][c] == 0)
-                            {
-                                ++zeros;
-                            }
-                        }
-                    }
-
-                    last_remaining_steps = zeros;
-                }
-
-                {
-                    auto copy = sudoku21x21;
-                    solver.solve_with_stats(copy);
-                    last_solver_steps = static_cast<int>(solver.get_last_steps());
-                    last_solver_time_ms = solver.get_last_time_ms();
-                }
-                for (int r = 0; r < 21; ++r)
-                {
-                    for (int c = 0; c < 21; ++c)
-                    {
-                        fixed21x21[r][c] = sudoku21x21[r][c] > 0;
-                    }
-                }
-
-                highlight.active = false;
             }
         }
 
@@ -205,6 +229,25 @@ int main()
         buttons_handler();
 
         statistic_handlers();
+        
+        if (samurai_ready)
+        {
+            std::lock_guard<std::mutex> lock(samurai_mutex);
+            sudoku21x21 = samurai_board_temp;
+            fixed21x21 = samurai_fixed_temp;
+            checker_ptr = std::make_unique<sudoku_checker_samurai>();
+            highlight.active = false;
+            selectedRow = -1;
+            selectedCol = -1;
+            currentGameType = 4;
+            samurai_ready = false;
+        }
+
+        if (samurai_generating)
+        {
+            DrawRectangle(0, 0, screenWidth, screenHeight, Fade(LIGHTGRAY, 0.6f));
+            DrawText("Loading Samurai...", screenWidth/2 - 120, screenHeight/2 - 10, 30, DARKGRAY);
+        }
 
         if (currentGameType == 1)
         {
