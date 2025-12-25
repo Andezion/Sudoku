@@ -7,6 +7,7 @@
 #include <thread>
 #include <atomic>
 #include <mutex>
+#include "sudoku_show.h"
 #include "sudoku_ui.h"
 #include "sudoku_input.h"
 #include "sudoku_constants.h"
@@ -79,6 +80,12 @@ int main()
                         last_solver_time_ms = local_solver.get_last_time_ms();
 
                         std::array<std::array<bool,21>,21> fixed_local{};
+                        // debug: print generated and solved puzzles to console
+                        sudoku_show_samurai dbgShow;
+                        std::cout << "[DEBUG] Generated samurai puzzle:\n";
+                        dbgShow.show(generated);
+                        std::cout << "[DEBUG] Solved samurai puzzle (for stats):\n";
+                        dbgShow.show(solved);
                         for (int r = 0; r < 21; ++r)
                         {
                             for (int c = 0; c < 21; ++c)
@@ -96,7 +103,7 @@ int main()
 
                         {
                             std::lock_guard lock(samurai_mutex);
-                            
+
                             samurai_board_temp = generated;
                             samurai_fixed_temp = fixed_local;
                         }
@@ -242,7 +249,7 @@ int main()
         buttons_handler();
 
         statistic_handlers();
-        
+
         if (samurai_ready)
         {
             std::lock_guard lock(samurai_mutex);
