@@ -13,7 +13,7 @@
 
 int main()
 {
-    InitWindow(screenWidth, screenHeight, "Sudoku Grid (raylib)");
+    InitWindow(screenWidth, screenHeight, "Sudoku Grid");
     SetTargetFPS(60);
 
     int currentGameType = 0;
@@ -35,6 +35,7 @@ int main()
 
     std::array<std::array<int, 21>, 21> samurai_board_temp{};
     std::array<std::array<bool, 21>, 21> samurai_fixed_temp{};
+
     std::mutex samurai_mutex;
 
     while (!WindowShouldClose())
@@ -50,8 +51,9 @@ int main()
                     samurai_generating = true;
                     samurai_ready = false;
 
-                    std::thread([&]() {
-                        sudoku_checker_samurai local_checker;
+                    std::thread([&]()
+                    {
+                        const sudoku_checker_samurai local_checker;
                         sudoku_solver_samurai local_solver(local_checker);
                         sudoku_generator_samurai generator(local_checker, local_solver);
 
@@ -66,25 +68,31 @@ int main()
                             }
                         }
 
-                        {
-                            auto copy = generated;
-                            local_solver.solve_with_stats(copy);
-                            last_solver_steps = static_cast<int>(local_solver.get_last_steps());
-                            last_solver_time_ms = local_solver.get_last_time_ms();
-                        }
+                        // create solved board from generated puzzle
+                        auto solved = generated;
+                        local_solver.solve_with_stats(solved);
+                        last_solver_steps = static_cast<int>(local_solver.get_last_steps());
+                        last_solver_time_ms = local_solver.get_last_time_ms();
 
                         std::array<std::array<bool,21>,21> fixed_local{};
                         for (int r = 0; r < 21; ++r)
                         {
                             for (int c = 0; c < 21; ++c)
                             {
-                                fixed_local[r][c] = generated[r][c] > 0;
+                                if (sudoku_generator_samurai::is_valid_cell(r, c))
+                                {
+                                    fixed_local[r][c] = true;
+                                }
+                                else
+                                {
+                                    fixed_local[r][c] = false;
+                                }
                             }
                         }
 
                         {
                             std::lock_guard<std::mutex> lock(samurai_mutex);
-                            samurai_board_temp = generated;
+                            samurai_board_temp = solved;
                             samurai_fixed_temp = fixed_local;
                         }
 
