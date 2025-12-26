@@ -1081,11 +1081,26 @@ public:
 
     static bool is_valid_cell(const int i, const int j)
     {
-        if (i < 9 && j < 9) return true;
-        if (i < 9 && j >= 12 && j < 21) return true;
-        if (i >= 6 && i < 15 && j >= 6 && j < 15) return true;
-        if (i >= 12 && i < 21 && j < 9) return true;
-        if (i >= 12 && i < 21 && j >= 12 && j < 21) return true;
+        if (i < 9 && j < 9)
+        {
+            return true;
+        }
+        if (i < 9 && j >= 12 && j < 21)
+        {
+            return true;
+        }
+        if (i >= 6 && i < 15 && j >= 6 && j < 15)
+        {
+            return true;
+        }
+        if (i >= 12 && i < 21 && j < 9)
+        {
+            return true;
+        }
+        if (i >= 12 && i < 21 && j >= 12 && j < 21)
+        {
+            return true;
+        }
 
         return false;
     }
@@ -1094,28 +1109,28 @@ public:
     {
         if (i < 9 && j < 9)
         {
-            start_i = (i / 3) * 3;
-            start_j = (j / 3) * 3;
+            start_i = i / 3 * 3;
+            start_j = j / 3 * 3;
         }
         else if (i < 9 && j >= 12)
         {
-            start_i = (i / 3) * 3;
-            start_j = ((j - 12) / 3) * 3 + 12;
+            start_i = i / 3 * 3;
+            start_j = (j - 12) / 3 * 3 + 12;
         }
         else if (i >= 6 && i < 15 && j >= 6 && j < 15)
         {
-            start_i = ((i - 6) / 3) * 3 + 6;
-            start_j = ((j - 6) / 3) * 3 + 6;
+            start_i = (i - 6) / 3 * 3 + 6;
+            start_j = (j - 6) / 3 * 3 + 6;
         }
         else if (i >= 12 && j < 9)
         {
-            start_i = ((i - 12) / 3) * 3 + 12;
-            start_j = (j / 3) * 3;
+            start_i = (i - 12) / 3 * 3 + 12;
+            start_j = j / 3 * 3;
         }
         else if (i >= 12 && j >= 12)
         {
-            start_i = ((i - 12) / 3) * 3 + 12;
-            start_j = ((j - 12) / 3) * 3 + 12;
+            start_i = (i - 12) / 3 * 3 + 12;
+            start_j = (j - 12) / 3 * 3 + 12;
         }
     }
 
@@ -1124,7 +1139,7 @@ public:
         int ni = -1, nj = -1;
         for (int r = i; r < 21 && ni == -1; ++r)
         {
-            for (int c = (r == i ? j : 0); c < 21; ++c)
+            for (int c = r == i ? j : 0; c < 21; ++c)
             {
                 if (is_valid_cell(r, c) && sudoku[r][c] == 0)
                 {
@@ -1142,7 +1157,7 @@ public:
 
         i = ni; j = nj;
 
-        std::vector<int> candidates = {1,2,3,4,5,6,7,8,9};
+        std::vector candidates = {1,2,3,4,5,6,7,8,9};
 
         for (int col = 0; col < 21; ++col)
         {
