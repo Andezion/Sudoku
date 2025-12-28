@@ -59,7 +59,7 @@ int main()
 
                         sudoku_generator_samurai generator(local_checker, local_solver);
 
-                        const auto generated = generator.generate21(5);
+                        auto generated = generator.generate21(5);
 
                         int zeros = 0;
                         for (int r = 0; r < 21; ++r)
@@ -76,11 +76,36 @@ int main()
                         auto solved = generated;
                         local_solver.solve_with_stats(solved);
 
+                        int validCells = 0;
+                        for (int r = 0; r < 21; ++r)
+                        {
+                            for (int c = 0; c < 21; ++c)
+                            {
+                                if (sudoku_generator_samurai::is_valid_cell(r, c)) ++validCells;
+                            }
+                        }
+
+                        if (zeros >= validCells)
+                        {
+                            generated = solved;
+                            zeros = 0;
+                            for (int r = 0; r < 21; ++r)
+                            {
+                                for (int c = 0; c < 21; ++c)
+                                {
+                                    if (generated[r][c] == 0)
+                                    {
+                                        ++zeros;
+                                    }
+                                }
+                            }
+                        }
+
                         last_solver_steps = static_cast<int>(local_solver.get_last_steps());
                         last_solver_time_ms = local_solver.get_last_time_ms();
 
                         std::array<std::array<bool,21>,21> fixed_local{};
-                        // debug: print generated and solved puzzles to console
+
                         sudoku_show_samurai dbgShow;
                         std::cout << "[DEBUG] Generated samurai puzzle:\n";
                         dbgShow.show(generated);
