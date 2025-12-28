@@ -1255,7 +1255,114 @@ public:
 
     void controlled_deleter(const uint8_t level) override
     {
+        static std::mt19937 rng(std::random_device{}());
 
+        std::vector<std::pair<int,int>> candidates;
+
+        const std::array<std::pair<int,int>,5> blocks = {{{0,0},{0,12},{6,6},{12,0},{12,12}}};
+
+        for (const auto &[fst, snd] : blocks)
+        {
+            const int r0 = fst;
+            const int c0 = snd;
+
+            for (int dr = 0; dr < 5; ++dr)
+            {
+                for (int dc = 0; dc < 5; ++dc)
+                {
+                    const int r = r0 + dr;
+                    if (const int c = c0 + dc; is_valid_cell(r, c))
+                    {
+                        candidates.emplace_back(r, c);
+                    }
+                }
+            }
+        }
+
+        std::shuffle(candidates.begin(), candidates.end(), rng);
+
+        int to_remove = 40 + 10 * level;
+
+        for (const auto [r, c] : candidates)
+        {
+            if (to_remove <= 0) break;
+
+            int r0 = 0, c0 = 0;
+            if (r >= 0 && r <= 8 && c >= 0 && c <= 8)
+            {
+                r0 = 0;
+                c0 = 0;
+            }
+            else if (r >= 0 && r <= 8 && c >= 12 && c <= 20)
+            {
+                r0 = 0;
+                c0 = 12;
+            }
+            else if (r >= 6 && r <= 14 && c >= 6 && c <= 14)
+            {
+                r0 = 6;
+                c0 = 6;
+            }
+            else if (r >= 12 && r <= 20 && c >= 0 && c <= 8)
+            {
+                r0 = 12;
+                c0 = 0;
+            }
+            else if (r >= 12 && r <= 20 && c >= 12 && c <= 20)
+            {
+                r0 = 12;
+                c0 = 12;
+            }
+
+            const int r_m = 2 * r0 + 8 - r;
+            const int c_m = 2 * c0 + 8 - c;
+
+            std::vector<std::pair<int,int>> to_try;
+            auto push_if_valid = [&](int rr, int cc)
+            {
+                if (rr >= 0 && rr < 21 && cc >= 0 && cc < 21 && is_valid_cell(rr, cc))
+                {
+                    if (sudoku[rr][cc] != 0)
+                    {
+                        to_try.emplace_back(rr, cc);
+                    }
+                }
+            };
+
+            push_if_valid(r, c);
+            push_if_valid(r_m, c);
+            push_if_valid(r, c_m);
+            push_if_valid(r_m, c_m);
+
+            std::sort(to_try.begin(), to_try.end());
+            to_try.erase(std::unique(to_try.begin(), to_try.end()), to_try.end());
+
+            if (to_try.empty())
+            {
+                continue;
+            }
+
+            std::vector<std::pair<std::pair<int,int>, int>> backups;
+            for (const auto &p : to_try)
+            {
+                backups.push_back({p, sudoku[p.first][p.second]});
+                sudoku[p.first][p.second] = 0;
+            }
+
+            if (!has_unique_solution(sudoku))
+            {
+                for (const auto &[fst, snd] : backups)
+                {
+                    const auto pr = fst.first;
+                    const auto pc = fst.second;
+                    sudoku[pr][pc] = snd;
+                }
+            }
+            else
+            {
+                to_remove -= static_cast<int>(to_try.size());
+            }
+        }
     }
 
     void symmetrical_diagonal_deleter(const uint8_t level) override
