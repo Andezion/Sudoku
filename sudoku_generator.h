@@ -89,6 +89,10 @@ public:
 
         static std::mt19937 rng(std::random_device{}());
         std::shuffle(candidates.begin(), candidates.end(), rng);
+        if (candidates.empty())
+        {
+            std::cerr << "[DEBUG] create_sudoku: no candidates for cell (" << i << "," << j << ")\n";
+        }
 
         for (const int num : candidates)
         {
@@ -348,10 +352,12 @@ public:
             if (!has_unique_solution(sudoku))
             {
                 sudoku[i][j] = backup;
+                std::cerr << "[DEBUG] samurai deleter: revert removal at (" << i << "," << j << ")\n";
             }
             else
             {
                 to_remove--;
+                std::cerr << "[DEBUG] samurai deleter: removed cell (" << i << "," << j << ") remaining=" << to_remove << "\n";
             }
         }
     }
@@ -1278,6 +1284,7 @@ public:
                 }
             }
         }
+            std::cerr << "[DEBUG] controlled_deleter: starting removal process\n";
 
         std::shuffle(candidates.begin(), candidates.end(), rng);
 
@@ -1357,10 +1364,12 @@ public:
                     const auto pc = fst.second;
                     sudoku[pr][pc] = snd;
                 }
+                    std::cerr << "[DEBUG] controlled_deleter: revert removal at cell group around (" << r << "," << c << ")\n";
             }
             else
             {
                 to_remove -= static_cast<int>(to_try.size());
+                    std::cerr << "[DEBUG] controlled_deleter: removed " << to_try.size() << " cells around (" << r << "," << c << ") remaining=" << to_remove << "\n";
             }
         }
     }
