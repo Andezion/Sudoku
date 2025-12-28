@@ -1141,7 +1141,6 @@ public:
     static bool create_sudoku(int i, int j, std::vector<int> probability[21][21], std::array<std::array<int, 21>, 21> & sudoku)
     {
         int ni = -1, nj = -1;
-        std::cerr << "[DEBUG] create_sudoku enter i=" << i << " j=" << j << "\n";
         for (int r = i; r < 21 && ni == -1; ++r)
         {
             for (int c = r == i ? j : 0; c < 21; ++c)
@@ -1157,15 +1156,12 @@ public:
 
         if (ni == -1)
         {
-            std::cerr << "[DEBUG] create_sudoku: no empty valid cells found -> success\n";
             return true;
         }
 
         i = ni; j = nj;
 
-        std::cerr << "[DEBUG] create_sudoku: filling cell (" << i << "," << j << ")\n";
-
-        std::vector candidates = {1,2,3,4,5,6,7,8,9};
+        std::vector candidates = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
         for (int col = 0; col < 21; ++col)
         {
