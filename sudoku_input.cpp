@@ -442,44 +442,30 @@ void handleSamurai(std::array<std::array<int,21>,21>& board,
                 {
                     int cr = -1, cc = -1;
 
-                    int r0 = 0, c0 = 0;
-                    if (selectedRow >= 0 && selectedRow <= 8 && selectedCol >= 0 && selectedCol <= 8)
+                    const std::array<std::pair<int,int>,5> blocks = {{{0,0},{0,12},{6,6},{12,0},{12,12}}};
+                    for (const auto &[fst, snd] : blocks)
                     {
-                        r0 = 0;
-                        c0 = 0;
-                    }
-                    else if (selectedRow >= 0 && selectedRow <= 8 && selectedCol >= 12 && selectedCol <= 20)
-                    {
-                        r0 = 0;
-                        c0 = 12;
-                    }
-                    else if (selectedRow >= 6 && selectedRow <= 14 && selectedCol >= 6 && selectedCol <= 14)
-                    {
-                        r0 = 6;
-                        c0 = 6;
-                    }
-                    else if (selectedRow >= 12 && selectedRow <= 20 && selectedCol >= 0 && selectedCol <= 8)
-                    {
-                        r0 = 12;
-                        c0 = 0;
-                    }
-                    else if (selectedRow >= 12 && selectedRow <= 20 && selectedCol >= 12 && selectedCol <= 20)
-                    {
-                        r0 = 12;
-                        c0 = 12;
-                    }
+                        const int r0 = fst;
+                        const int c0 = snd;
 
-                    for (int c = 0; c < 9; ++c)
-                    {
-                        if (board[selectedRow][c0 + c] == value)
+                        if (selectedRow < r0 || selectedRow > r0 + 8 || selectedCol < c0 || selectedCol > c0 + 8)
                         {
-                            cr = selectedRow; cc = c0 + c;
+                            continue;
+                        }
+
+                        for (int c = 0; c < 9; ++c)
+                        {
+                            if (board[selectedRow][c0 + c] == value)
+                            {
+                                cr = selectedRow; cc = c0 + c;
+                                break;
+                            }
+                        }
+                        if (cr != -1)
+                        {
                             break;
                         }
-                    }
 
-                    if (cr == -1)
-                    {
                         for (int r = 0; r < 9; ++r)
                         {
                             if (board[r0 + r][selectedCol] == value)
@@ -488,15 +474,16 @@ void handleSamurai(std::array<std::array<int,21>,21>& board,
                                 break;
                             }
                         }
-                    }
+                        if (cr != -1)
+                        {
+                            break;
+                        }
 
-                    if (cr == -1)
-                    {
                         const int br = r0 + (selectedRow - r0) / 3 * 3;
                         const int bc = c0 + (selectedCol - c0) / 3 * 3;
-                        for (int i = 0; i < 3; ++i)
+                        for (int i = 0; i < 3 && cr == -1; ++i)
                         {
-                            for (int j = 0; j < 3; ++j)
+                            for (int j = 0; j < 3 && cr == -1; ++j)
                             {
                                 if (board[br + i][bc + j] == value)
                                 {
@@ -504,6 +491,10 @@ void handleSamurai(std::array<std::array<int,21>,21>& board,
                                     break;
                                 }
                             }
+                        }
+                        if (cr != -1)
+                        {
+                            break;
                         }
                     }
 
