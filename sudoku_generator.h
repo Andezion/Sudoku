@@ -352,12 +352,10 @@ public:
             if (!has_unique_solution(sudoku))
             {
                 sudoku[i][j] = backup;
-                std::cerr << "[DEBUG] samurai deleter: revert removal at (" << i << "," << j << ")\n";
             }
             else
             {
                 to_remove--;
-                std::cerr << "[DEBUG] samurai deleter: removed cell (" << i << "," << j << ") remaining=" << to_remove << "\n";
             }
         }
     }
@@ -1267,42 +1265,83 @@ public:
     {
         static std::mt19937 rng(std::random_device{}());
 
-        // Collect all filled valid samurai cells
-        std::vector<std::pair<int,int>> filled;
+        int to_remove = 40 + level;
+        int initial_filled = 0;
         for (int i = 0; i < 21; ++i)
-        {
             for (int j = 0; j < 21; ++j)
-            {
-                if (is_valid_cell(i, j) && sudoku[i][j] != 0)
-                    filled.emplace_back(i, j);
-            }
-        }
+                if (is_valid_cell(i, j) && sudoku[i][j] != 0) ++initial_filled;
 
-        std::shuffle(filled.begin(), filled.end(), rng);
+        std::cerr << "[DEBUG] controlled_deleter: starting to_remove=" << to_remove << " initial_filled=" << initial_filled << "\n";
 
-        int to_remove = 40 + 10 * level;
-        std::cerr << "[DEBUG] controlled_deleter: filledCells=" << filled.size() << " targetRemove=" << to_remove << "\n";
+        int removed_count = 0;
 
-        for (const auto &p : filled)
+        while (to_remove > 0)
         {
-            if (to_remove <= 0) break;
-            const int r = p.first;
-            const int c = p.second;
-
-            const int backup = sudoku[r][c];
-            sudoku[r][c] = 0;
-
-            if (!has_unique_solution(sudoku))
+            std::vector<std::pair<int,int>> filled;
+            for (int i = 0; i < 21; ++i)
             {
-                sudoku[r][c] = backup;
-                std::cerr << "[DEBUG] controlled_deleter: revert removal at (" << r << "," << c << ")\n";
+                for (int j = 0; j < 21; ++j)
+                {
+                    if (is_valid_cell(i, j) && sudoku[i][j] != 0)
+                        filled.emplace_back(i, j);
+                }
             }
-            else
+
+            if (filled.empty()) break;
+
+            std::cerr << "[DEBUG] controlled_deleter: pass filledCount=" << filled.size();
+            if (!filled.empty())
             {
-                --to_remove;
-                std::cerr << "[DEBUG] controlled_deleter: removed (" << r << "," << c << ") remaining=" << to_remove << "\n";
+                std::cerr << " sample=(" << filled[0].first << "," << filled[0].second << ")";
+                if (filled.size() > 1) std::cerr << ",(" << filled[1].first << "," << filled[1].second << ")";
+                if (filled.size() > 2) std::cerr << ",(" << filled[2].first << "," << filled[2].second << ")";
+            }
+            std::cerr << "\n";
+
+            std::shuffle(filled.begin(), filled.end(), rng);
+
+            bool removed_this_pass = false;
+
+            for (const auto &p : filled)
+            {
+                if (to_remove <= 0) break;
+                const int r = p.first;
+                const int c = p.second;
+
+                if (sudoku[r][c] == 0) continue;
+
+                const int backup = sudoku[r][c];
+                sudoku[r][c] = 0;
+
+                if (!has_unique_solution(sudoku))
+                {
+                    sudoku[r][c] = backup;
+                }
+                else
+                {
+                    --to_remove;
+                    ++removed_count;
+                    removed_this_pass = true;
+
+                    int remaining_filled = 0;
+                    for (int ii = 0; ii < 21; ++ii)
+                        for (int jj = 0; jj < 21; ++jj)
+                            if (is_valid_cell(ii, jj) && sudoku[ii][jj] != 0) ++remaining_filled;
+
+                    std::cerr << "[DEBUG] controlled_deleter: removed (" << r << "," << c << ") remaining=" << to_remove << " filledNow=" << remaining_filled << "\n";
+                    break; // refresh filled list
+                }
+            }
+
+            if (!removed_this_pass)
+            {
+                // no further single-cell removals keep uniqueness
+                std::cerr << "[DEBUG] controlled_deleter: no removable cells this pass, stopping\n";
+                break;
             }
         }
+
+        std::cerr << "[DEBUG] controlled_deleter: finished removed=" << removed_count << "\n";
     }
 
     void symmetrical_diagonal_deleter(const uint8_t level) override
@@ -1398,10 +1437,10 @@ public:
 
         // symmetrical_horizontal_deleter(level);
         // symmetrical_vertical_deleter(level);
-        controlled_deleter(level);
+        // controlled_deleter(level);
         // symmetrical_diagonal_deleter(level);
 
-        // deleter(level);
+        deleter(level);
 
         return sudoku;
     }
