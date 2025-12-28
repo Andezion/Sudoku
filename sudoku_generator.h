@@ -1143,6 +1143,7 @@ public:
     static bool create_sudoku(int i, int j, std::vector<int> probability[21][21], std::array<std::array<int, 21>, 21> & sudoku)
     {
         int ni = -1, nj = -1;
+        std::cerr << "[DEBUG] create_sudoku enter i=" << i << " j=" << j << "\n";
         for (int r = i; r < 21 && ni == -1; ++r)
         {
             for (int c = r == i ? j : 0; c < 21; ++c)
@@ -1158,10 +1159,13 @@ public:
 
         if (ni == -1)
         {
+            std::cerr << "[DEBUG] create_sudoku: no empty valid cells found -> success\n";
             return true;
         }
 
         i = ni; j = nj;
+
+        std::cerr << "[DEBUG] create_sudoku: filling cell (" << i << "," << j << ")\n";
 
         std::vector candidates = {1,2,3,4,5,6,7,8,9};
 
@@ -1263,113 +1267,40 @@ public:
     {
         static std::mt19937 rng(std::random_device{}());
 
-        std::vector<std::pair<int,int>> candidates;
-
-        const std::array<std::pair<int,int>,5> blocks = {{{0,0},{0,12},{6,6},{12,0},{12,12}}};
-
-        for (const auto &[fst, snd] : blocks)
+        // Collect all filled valid samurai cells
+        std::vector<std::pair<int,int>> filled;
+        for (int i = 0; i < 21; ++i)
         {
-            const int r0 = fst;
-            const int c0 = snd;
-
-            for (int dr = 0; dr < 5; ++dr)
+            for (int j = 0; j < 21; ++j)
             {
-                for (int dc = 0; dc < 5; ++dc)
-                {
-                    const int r = r0 + dr;
-                    if (const int c = c0 + dc; is_valid_cell(r, c))
-                    {
-                        candidates.emplace_back(r, c);
-                    }
-                }
+                if (is_valid_cell(i, j) && sudoku[i][j] != 0)
+                    filled.emplace_back(i, j);
             }
         }
-            std::cerr << "[DEBUG] controlled_deleter: starting removal process\n";
 
-        std::shuffle(candidates.begin(), candidates.end(), rng);
+        std::shuffle(filled.begin(), filled.end(), rng);
 
         int to_remove = 40 + 10 * level;
+        std::cerr << "[DEBUG] controlled_deleter: filledCells=" << filled.size() << " targetRemove=" << to_remove << "\n";
 
-        for (const auto [r, c] : candidates)
+        for (const auto &p : filled)
         {
             if (to_remove <= 0) break;
+            const int r = p.first;
+            const int c = p.second;
 
-            int r0 = 0, c0 = 0;
-            if (r >= 0 && r <= 8 && c >= 0 && c <= 8)
-            {
-                r0 = 0;
-                c0 = 0;
-            }
-            else if (r >= 0 && r <= 8 && c >= 12 && c <= 20)
-            {
-                r0 = 0;
-                c0 = 12;
-            }
-            else if (r >= 6 && r <= 14 && c >= 6 && c <= 14)
-            {
-                r0 = 6;
-                c0 = 6;
-            }
-            else if (r >= 12 && r <= 20 && c >= 0 && c <= 8)
-            {
-                r0 = 12;
-                c0 = 0;
-            }
-            else if (r >= 12 && r <= 20 && c >= 12 && c <= 20)
-            {
-                r0 = 12;
-                c0 = 12;
-            }
-
-            const int r_m = 2 * r0 + 8 - r;
-            const int c_m = 2 * c0 + 8 - c;
-
-            std::vector<std::pair<int,int>> to_try;
-            auto push_if_valid = [&](int rr, int cc)
-            {
-                if (rr >= 0 && rr < 21 && cc >= 0 && cc < 21 && is_valid_cell(rr, cc))
-                {
-                    if (sudoku[rr][cc] != 0)
-                    {
-                        to_try.emplace_back(rr, cc);
-                    }
-                }
-            };
-
-            push_if_valid(r, c);
-            push_if_valid(r_m, c);
-            push_if_valid(r, c_m);
-            push_if_valid(r_m, c_m);
-
-            std::sort(to_try.begin(), to_try.end());
-            to_try.erase(std::unique(to_try.begin(), to_try.end()), to_try.end());
-
-            if (to_try.empty())
-            {
-                continue;
-            }
-
-            std::vector<std::pair<std::pair<int,int>, int>> backups;
-            for (const auto &p : to_try)
-            {
-                backups.push_back({p, sudoku[p.first][p.second]});
-                sudoku[p.first][p.second] = 0;
-            }
+            const int backup = sudoku[r][c];
+            sudoku[r][c] = 0;
 
             if (!has_unique_solution(sudoku))
             {
-                for (const auto &[fst, snd] : backups)
-                {
-                    const auto pr = fst.first;
-                    const auto pc = fst.second;
-                    sudoku[pr][pc] = snd;
-                }
-                    std::cerr << "[DEBUG] controlled_deleter: revert removal at cell group around (" << r << "," << c << ")\n";
+                sudoku[r][c] = backup;
+                std::cerr << "[DEBUG] controlled_deleter: revert removal at (" << r << "," << c << ")\n";
             }
             else
             {
-                to_remove -= static_cast<int>(to_try.size());
-                    std::cerr << "[DEBUG] controlled_deleter: removed " << to_try.size() << " cells around (" << r << "," << c << ") remaining=" << to_remove << "\n";
+                --to_remove;
+                std::cerr << "[DEBUG] controlled_deleter: removed (" << r << "," << c << ") remaining=" << to_remove << "\n";
             }
         }
     }
