@@ -123,59 +123,56 @@ public:
     bool is_valid_sudoku(const std::array<std::array<int, 21>, 21> & sudoku,
                          const int row, const int col, const int num) const override
     {
-        int r0{}, c0{};
-        if (row >= 0 && row <= 8 && col >= 0 && col <= 8)
+        const std::pair<int,int> blocks[5] =
         {
-            r0 = 0, c0 = 0;
-        }
-        else if (row >= 0 && row <= 8 && col >= 12 && col <= 20)
-        {
-            r0 = 0, c0 = 12;
-        }
-        else if (row >= 6 && row <= 14 && col >= 6 && col <= 14)
-        {
-            r0 = 6, c0 = 6;
-        }
-        else if (row >= 12 && row <= 20 && col >= 0 && col <= 8)
-        {
-            r0 = 12, c0 = 0;
-        }
-        else if (row >= 12 && row <= 20 && col >= 12 && col <= 20)
-        {
-            r0 = 12, c0 = 12;
-        }
-        else
-        {
-            return true;
-        }
+            {0, 0}, {0, 12}, {6, 6}, {12, 0}, {12, 12}
+        };
 
-        for (int i = 0; i < 9; i++)
+        bool belongs_to_any = false;
+
+        for (const auto &[fst, snd] : blocks)
         {
-            if (sudoku[row][c0 + i] == num)
+            const int r0 = fst;
+            const int c0 = snd;
+
+
+            if (row < r0 || row > r0 + 8 || col < c0 || col > c0 + 8)
             {
-                return false;
+                continue;
             }
 
-            if (sudoku[r0 + i][col] == num)
-            {
-                return false;
-            }
-        }
+            belongs_to_any = true;
 
-        const int br = r0 + (row - r0) / 3 * 3;
-        const int bc = c0 + (col - c0) / 3 * 3;
-
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 3; j++)
+            for (int i = 0; i < 9; ++i)
             {
-                if (sudoku[br + i][bc + j] == num)
+                if (sudoku[row][c0 + i] == num)
                 {
                     return false;
                 }
             }
+
+            for (int i = 0; i < 9; ++i)
+            {
+                if (sudoku[r0 + i][col] == num)
+                {
+                    return false;
+                }
+            }
+
+            const int br = r0 + (row - r0) / 3 * 3;
+            const int bc = c0 + (col - c0) / 3 * 3;
+            for (int i = 0; i < 3; ++i)
+            {
+                for (int j = 0; j < 3; ++j)
+                {
+                    if (sudoku[br + i][bc + j] == num)
+                    {
+                        return false;
+                    }
+                }
+            }
         }
 
-        return true;
+        return !belongs_to_any ? true : true;
     }
 };
