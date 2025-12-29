@@ -45,9 +45,9 @@ int main()
         {
             gameTimer.start();
 
-            if (buttonPressed == 4)
-            {
-                if (!samurai_generating)
+            if (currentGameType == 4)
+                {
+                    if (!samurai_generating)
                 {
                     samurai_generating = true;
                     samurai_ready = false;
@@ -138,12 +138,8 @@ int main()
                         samurai_generating = false;
                     }).detach();
                 }
-            }
-            else
-            {
-                currentGameType = buttonPressed;
-
-                if (currentGameType == 1)
+                }
+                else if (currentGameType == 1)
                 {
                     checker_ptr = std::make_unique<sudoku_checker_classic>();
                     const sudoku_solver_classic solver(*checker_ptr);
@@ -263,7 +259,6 @@ int main()
 
                     highlight.active = false;
                 }
-            }
         }
 
         BeginDrawing();
